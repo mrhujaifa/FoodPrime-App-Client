@@ -1,0 +1,108 @@
+food-hub-pro/
+├── prisma/                          # DATABASE LAYER
+│   ├── schema.prisma                # Models (User, Provider, Meal, Order, Review)
+│   └── seed.ts                      # Seeds Admin user & default categories
+├── public/                          # STATIC ASSETS
+│   ├── images/                      # Hero banners, logo.png
+│   ├── icons/                       # svg files (delivery-bike.svg, etc.)
+│   └── placeholders/                # meal-placeholder.jpg
+│
+├── src/
+│   ├── app/                         # NEXT.JS ROUTING & LAYOUTS
+│   │   ├── (auth)/                  # Auth Group (e.g., /login)
+│   │   │   ├── login/page.tsx
+│   │   │   ├── register/page.tsx
+│   │   │   └── layout.tsx           # Shared centered layout for auth forms
+│   │   ├── (customer)/              # Customer Routes
+│   │   │   ├── page.tsx             # Home: Hero + Categories
+│   │   │   ├── meals/
+│   │   │   │   ├── page.tsx         # List of all meals + Filters
+│   │   │   │   └── [id]/page.tsx    # Specific meal details
+│   │   │   ├── providers/
+│   │   │   │   └── [id]/page.tsx    # Restaurant profile & their specific menu
+│   │   │   ├── cart/page.tsx        # Shopping cart overview
+│   │   │   ├── checkout/page.tsx    # Address & payment (COD) selection
+│   │   │   ├── orders/
+│   │   │   │   ├── page.tsx         # Customer order history
+│   │   │   │   └── [id]/page.tsx    # Real-time tracking for one order
+│   │   │   ├── profile/page.tsx     # User settings
+│   │   │   └── layout.tsx           # Main Navbar & Footer
+│   │   ├── (provider)/              # Provider/Restaurant Routes
+│   │   │   ├── provider/dashboard/  # Sales charts & summary
+│   │   │   ├── provider/menu/       # CRUD operations for their meals
+│   │   │   ├── provider/orders/     # Incoming orders to accept/reject
+│   │   │   └── layout.tsx           # Sidebar for Restaurant Owners
+│   │   ├── (admin)/                 # Platform Admin Routes
+│   │   │   ├── admin/dashboard/     # Global platform stats
+│   │   │   ├── admin/users/         # Suspend/Activate providers & customers
+│   │   │   ├── admin/orders/        # Master list of every order in the system
+│   │   │   ├── admin/categories/    # Create/Edit Cuisines (Italian, Thai, etc.)
+│   │   │   └── layout.tsx           # Admin Panel Sidebar
+│   │   ├── api/                     # API ROUTE HANDLERS
+│   │   │   ├── auth/[...nextauth]/  # Authentication endpoints
+│   │   │   └── upload/route.ts      # Image upload handling (Cloudinary/S3)
+│   │   ├── globals.css              # Tailwind & base styles
+│   │   └── layout.tsx               # Root layout: Fonts, Providers, Toasters
+│   │
+│   ├── actions/                     # SERVER ACTIONS (Direct DB mutations)
+│   │   ├── auth-actions.ts          # register, login logic
+│   │   ├── meal-actions.ts          # createMeal, updateMeal, deleteMeal
+│   │   ├── order-actions.ts         # checkout, updateOrderStatus
+│   │   └── user-actions.ts          # updateProfile, toggleUserStatus
+│   │
+│   ├── services/                    # DATA ACCESS LAYER (Direct Prisma queries)
+│   │   ├── meal.service.ts          # getMeals(), getFeaturedMeals()
+│   │   ├── order.service.ts         # getOrdersByUserId(), getAllOrders()
+│   │   ├── provider.service.ts      # getProviderWithMenu()
+│   │   └── user.service.ts          # findUserByEmail(), getAllUsers()
+│   │
+│   ├── features/                    # COMPLEX BUSINESS LOGIC (Modular)
+│   │   ├── cart/
+│   │   │   ├── components/          # CartItem, CartSummary, CartDrawer
+│   │   │   └── use-cart-logic.ts    # Logic for adding/removing items
+│   │   ├── tracking/
+│   │   │   ├── components/          # StatusStepper, DeliveryMap
+│   │   │   └── order-helpers.ts     # Time calculation logic
+│   │   └── search-filter/
+│   │       ├── components/          # FilterSidebar, SearchBar
+│   │       └── filter-utils.ts      # Price & Category sorting logic
+│   │
+│   ├── components/                  # SHARED UI COMPONENTS
+│   │   ├── ui/                      # Shadcn components (Button, Input, Badge)
+│   │   ├── shared/                  # Navbar, Footer, FoodCard, SectionHeading
+│   │   └── skeletons/               # Loading states for meals & orders
+│   │
+│   ├── validations/                 # ZOD SCHEMAS (Form & API validation)
+│   │   ├── auth.schema.ts           # Login/Register rules
+│   │   ├── meal.schema.ts           # Add/Edit meal rules
+│   │   └── order.schema.ts          # Checkout rules
+│   │
+│   ├── constants/                   # STATIC CONFIGURATIONS
+│   │   ├── navigation.ts            # Sidebar & Navbar link arrays
+│   │   ├── roles.ts                 # ENUM: ADMIN, CUSTOMER, PROVIDER
+│   │   └── status.ts                # ENUM: PLACED, PREPARING, DELIVERED
+│   │
+│   ├── lib/                         # UTILITY WRAPPERS
+│   │   ├── prisma.ts                # Prisma Client init
+│   │   ├── auth-options.ts          # NextAuth configurations
+│   │   └── utils.ts                 # cn() class merger tool
+│   │
+│   ├── hooks/                       # GLOBAL REUSABLE HOOKS
+│   │   ├── use-debounce.ts          # For search inputs
+│   │   └── use-auth-check.ts        # Client-side role checking
+│   │
+│   ├── store/                       # GLOBAL STATE (Zustand)
+│   │   └── use-cart-store.ts        # Persistent Cart State
+│   │
+│   ├── types/                       # TYPESCRIPT DEFINITIONS
+│   │   ├── index.d.ts               # Global interfaces
+│   │   └── next-auth.d.ts           # Extending NextAuth Session types
+│   │
+│   └── utils/                       # HELPER FUNCTIONS
+│       ├── format-currency.ts       # e.g., 500 -> ৳500 or $5.00
+│       └── format-date.ts           # Human-readable order dates
+│
+├── middleware.ts                    # ROLE-BASED ACCESS CONTROL (Auth Guard)
+├── tailwind.config.ts               # Theme customization
+├── next.config.mjs                  # Image domains & build settings
+└── .env                             # DATABASE_URL, NEXTAUTH_SECRET

@@ -1,0 +1,7 @@
+feat,নতুন কোনো ফিচার বা সেকশন যোগ করলে,feat(hero): add luxury emerald hero section
+style,"ডিজাইন, কালার, বা প্যাডিং পরিবর্তন করলে",style(hero): reduce text width and adjust buttons
+fix,কোনো বাগ বা এরর ঠিক করলে,fix(nav): resolve mobile menu overlap issue
+chore,প্যাকেজ ইন্সটল বা কনফিগ সেটআপে,chore: install lucide-react for icons
+refactor,কোড ক্লিন করলে (লজিক না বদলে),refactor(hero): map content from constants object
+docs,README বা ডকুমেন্টেশন আপডেট করলে,docs: add installation steps in readme
+perf,পারফরম্যান্স ইমপ্রুভ করলে,perf(images): optimize hero banner loading speed
