@@ -1,246 +1,287 @@
-import React from "react";
-import { ArrowLeft, Camera, CheckCircle2, Info, Save, X } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { Save, Loader2, Utensils, Clock, Flame } from "lucide-react";
+import { toast } from "sonner";
+
+import { mealSchema } from "@/schemas/meal.schema";
+import { providerServices } from "@/services/provider.services";
+import { MealFormData, Spicy } from "@/types";
+import { getSessionAction } from "@/actions/user.actions";
 
 const MealForm = () => {
+  const [loading, setLoading] = useState(false);
+  const [isSessionLoading, setIsSessionLoading] = useState(true); // সেশন লোডিং স্টেট
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [formData, setFormData] = useState<MealFormData>({
+    name: "",
+    description: "",
+    price: 0,
+    discountPrice: null,
+    imageUrl: "https://example.com/default.jpg",
+    isAvailable: true,
+    isVeg: false,
+    spiciness: Spicy.MEDIUM,
+    isBestseller: false,
+    prepTime: null,
+    calories: null,
+    categoryId: "",
+    providerId: "", // এটি আসলে userId হিসেবে কাজ করবে
+  });
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const result = await getSessionAction();
+        // আপনার অবজেক্ট স্ট্রাকচার অনুযায়ী: result.data.session.userId
+        const userId = result?.data?.session?.userId || result?.data?.user?.id;
+
+        if (userId) {
+          setFormData((prev) => ({ ...prev, providerId: userId }));
+        } else {
+          toast.error("You must be logged in to create a meal.");
+        }
+      } catch (err) {
+        toast.error("Failed to load session.");
+      } finally {
+        setIsSessionLoading(false); // লোডিং শেষ
+      }
+    };
+    fetchSession();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value, type } = e.target;
+    const val =
+      type === "number" ? (value === "" ? null : parseFloat(value)) : value;
+    setFormData((prev) => ({ ...prev, [name]: val }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.providerId) {
+      toast.error("Identity not verified. Please refresh.");
+      return;
+    }
+
+    setLoading(true);
+    setErrors({});
+
+    const result = mealSchema.safeParse(formData);
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
+      });
+      setErrors(fieldErrors);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await providerServices.createMeal(result.data);
+      if (res.success) {
+        toast.success("Meal created successfully!");
+
+        e.currentTarget.dispatchEvent(new Event("reset"));
+      } else {
+        toast.error(res.message || "Failed to create meal");
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="max-w-9xl mx-auto px-6 bg-slate-50 ">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm px-8 py-4 mb-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Top Row: Breadcrumbs & Meta */}
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-2">
-            <span className="hover:text-slate-800 cursor-pointer transition-colors">
-              Dashboard
-            </span>
-            <span className="text-slate-300">/</span>
-            <span className="hover:text-slate-800 cursor-pointer transition-colors">
-              Menu Management
-            </span>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-800 font-semibold">New Item</span>
-          </div>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* Left: Title & Back Navigation */}
-            <div className="flex items-center gap-4">
-              <button className="group p-2 -ml-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors">
-                <ArrowLeft
-                  size={20}
-                  className="group-hover:-translate-x-1 transition-transform"
-                />
-              </button>
-
-              <div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold text-slate-900 leading-none">
-                    Add New Meal
-                  </h1>
-                  {/* Status Badge */}
-                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-[11px] font-bold uppercase tracking-wide">
-                    <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
-                    Unpublished
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Actions & Auto-save Status */}
-            <div className="flex items-center gap-6">
-              {/* Auto-save Indicator (Real world touch) */}
-              <span className="hidden lg:flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                <CheckCircle2 size={14} />
-                All changes saved
-              </span>
-
-              <div className="h-8  bg-slate-200 hidden lg:block"></div>
-
-              <div className="flex items-center gap-3">
-                <button className="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:text-slate-800 transition shadow-sm">
-                  Cancel
-                </button>
-                <button className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition shadow-md shadow-orange-200">
-                  <Save size={16} />
-                  Save Meal
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Basic Info & Media */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Section: General Info */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              General Information
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Meal Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Spicy Grilled Chicken Pasta"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none border-slate-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Describe the ingredients, taste, and preparation..."
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none border-slate-300"
-                ></textarea>
-              </div>
-            </div>
-          </div>
-
-          {/* Section: Pricing & Inventory */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              Pricing & Status
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Base Price ($)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none border-slate-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Discount Price ($)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Optional"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none border-slate-300"
-                />
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg bg-slate-50">
-                <input
-                  type="checkbox"
-                  id="available"
-                  className="w-5 h-5 accent-orange-600"
-                  defaultChecked
-                />
-                <label
-                  htmlFor="available"
-                  className="text-sm font-medium text-slate-700"
-                >
-                  Currently Available
-                </label>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg bg-slate-50">
-                <input
-                  type="checkbox"
-                  id="bestseller"
-                  className="w-5 h-5 accent-orange-600"
-                />
-                <label
-                  htmlFor="bestseller"
-                  className="text-sm font-medium text-slate-700"
-                >
-                  Mark as Bestseller
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Meta Data & Categories */}
-        <div className="space-y-6">
-          {/* Image Upload Placeholder */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 className="text-lg font-semibold mb-4">Meal Image</h2>
-            <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center text-slate-500 hover:border-orange-400 transition cursor-pointer">
-              <Camera size={40} className="mb-2 text-slate-400" />
-              <p className="text-xs text-center">
-                Click to upload or drag and drop JPG, PNG (Max 5MB)
-              </p>
-            </div>
-          </div>
-
-          {/* Classification */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 className="text-lg font-semibold mb-4">Categorization</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Category
-                </label>
-                <select className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none border-slate-300">
-                  <option>Select Category</option>
-                  <option>Main Course</option>
-                  <option>Appetizers</option>
-                  <option>Desserts</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Spiciness Level
-                </label>
-                <select className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none border-slate-300">
-                  <option value="NONE">None</option>
-                  <option value="MILD">Mild</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HOT">Hot</option>
-                  <option value="EXTRA_HOT">Extra Hot</option>
-                </select>
-              </div>
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="text-sm font-medium text-slate-700">
-                  Vegetarian?
-                </span>
-                <button className="w-12 h-6 bg-slate-200 rounded-full relative shadow-inner">
-                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition shadow-sm"></div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Nutrition & Prep */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 className="text-lg font-semibold mb-4">Logistics</h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Prep Time (min)
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full px-4 py-2 border rounded-lg mt-1"
-                    placeholder="20"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Calories
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full px-4 py-2 border rounded-lg mt-1"
-                    placeholder="450"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-5xl mx-auto p-6 space-y-8 bg-white shadow-md rounded-xl"
+    >
+      <div className="flex justify-between items-center border-b pb-4">
+        <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
+          <Utensils className="text-orange-500" /> Create New Meal
+        </h2>
+        <button
+          type="submit"
+          disabled={loading || isSessionLoading}
+          className="flex items-center gap-2 bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 disabled:bg-orange-300 transition-all"
+        >
+          {isSessionLoading ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : loading ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <Save size={18} />
+          )}
+          {isSessionLoading
+            ? "Authenticating..."
+            : loading
+              ? "Saving..."
+              : "Save Meal"}
+        </button>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              Meal Name *
+            </label>
+            <input
+              name="name"
+              placeholder="e.g. Pasta Carbonara"
+              onChange={handleChange}
+              className={`w-full p-2 border rounded-md outline-none focus:ring-2 ${errors.name ? "border-red-500 focus:ring-red-200" : "focus:ring-orange-200"}`}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              Description *
+            </label>
+            <textarea
+              name="description"
+              rows={3}
+              placeholder="Detailed description..."
+              onChange={handleChange}
+              className={`w-full p-2 border rounded-md outline-none focus:ring-2 ${errors.description ? "border-red-500 focus:ring-red-200" : "focus:ring-orange-200"}`}
+            />
+            {errors.description && (
+              <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Price ($) *
+              </label>
+              <input
+                type="number"
+                name="price"
+                step="0.01"
+                onChange={handleChange}
+                className={`w-full p-2 border rounded-md outline-none focus:ring-2 ${errors.price ? "border-red-500" : "focus:ring-orange-200"}`}
+              />
+              {errors.price && (
+                <p className="text-red-500 text-xs mt-1">{errors.price}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Discount Price
+              </label>
+              <input
+                type="number"
+                name="discountPrice"
+                step="0.01"
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-orange-200"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-1 flex items-center gap-1">
+                <Clock size={14} /> Prep (min)
+              </label>
+              <input
+                type="number"
+                name="prepTime"
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-orange-200"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Calories
+              </label>
+              <input
+                type="number"
+                name="calories"
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-orange-200"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1 flex items-center gap-1">
+              <Flame size={14} className="text-red-500" /> Spiciness
+            </label>
+            <select
+              name="spiciness"
+              value={formData.spiciness}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md bg-white outline-none focus:ring-2 focus:ring-orange-200"
+            >
+              {Object.values(Spicy).map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              Category ID *
+            </label>
+            <input
+              name="categoryId"
+              placeholder="UUID of Category"
+              onChange={handleChange}
+              className={`w-full p-2 border rounded-md outline-none focus:ring-2 ${errors.categoryId ? "border-red-500" : "focus:ring-orange-200"}`}
+            />
+            {errors.categoryId && (
+              <p className="text-red-500 text-xs mt-1">{errors.categoryId}</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-3 pt-2">
+            {(["isVeg", "isBestseller", "isAvailable"] as const).map((key) => (
+              <label
+                key={key}
+                className={`flex items-center gap-2 cursor-pointer px-4 py-1.5 rounded-full border transition-all ${formData[key] ? "bg-orange-50 border-orange-500 text-orange-700" : "bg-gray-50 border-gray-200 text-gray-600"}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={formData[key]}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      [key]: e.target.checked,
+                    }))
+                  }
+                  className="hidden"
+                />
+                <span className="text-sm font-medium">
+                  {key === "isVeg"
+                    ? "Veg"
+                    : key === "isBestseller"
+                      ? "Bestseller"
+                      : "Available"}
+                </span>
+              </label>
+            ))}
+          </div>
+        </section>
+      </div>
+    </form>
   );
 };
 

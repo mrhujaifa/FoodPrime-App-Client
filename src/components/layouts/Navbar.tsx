@@ -9,6 +9,7 @@ import {
   User,
   Settings,
   LogOut,
+  Handshake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { userService } from "@/services/user.services";
+import Link from "next/link";
 
 // --- Types ---
 interface SessionUser {
@@ -79,7 +81,7 @@ interface NavbarProps {
 const Navbar = async ({
   logo = {
     url: "/",
-    src: "https://orgass.myshopify.com/cdn/shop/files/logo-1.png?v=1641276560",
+    src: "/logos/logo2.png",
     alt: "logo",
     title: "",
   },
@@ -115,8 +117,6 @@ const Navbar = async ({
   const sessionResponse = await userService.getSession();
   const user = sessionResponse?.data?.user as SessionUser | undefined;
 
-  console.log(sessionResponse.data.user.id);
-
   return (
     <section
       className={cn(
@@ -127,15 +127,21 @@ const Navbar = async ({
       <div className="container mx-auto px-4 md:px-6">
         <nav className="hidden items-center lg:grid lg:grid-cols-3 w-full">
           <div className="flex justify-start">
-            <a href={logo.url} className="flex items-center gap-2">
-              <Image
-                width={100}
-                height={40}
-                src={logo.src}
-                className="max-h-9 object-contain brightness-0 invert"
-                alt={logo.alt}
-              />
-            </a>
+            <div
+              className="flex items-center gap-2 text-lg text-[#5bab7a] font-bold
+            "
+            >
+              <a href={logo.url} className="flex items-center gap-2">
+                <Image
+                  width={34}
+                  height={34}
+                  src={logo.src}
+                  className=""
+                  alt={logo.alt}
+                />
+              </a>
+              <span className="">foodprime</span>
+            </div>
           </div>
 
           <div className="flex justify-center">
@@ -245,11 +251,11 @@ const ProfileDropdown = ({ user }: { user: SessionUser }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-56 mt-2 bg-zinc-950 border border-white/10 text-white shadow-2xl"
+        className="w-80 p-3 mt-2 bg-zinc-950 border rounded-sm border-white/10 text-white shadow-2xl"
         align="end"
       >
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col space-y-3">
             <p className="text-sm font-medium leading-none">
               {user.name || "User"}
             </p>
@@ -259,6 +265,11 @@ const ProfileDropdown = ({ user }: { user: SessionUser }) => {
         <DropdownMenuSeparator className="bg-white/10" />
         <DropdownMenuItem className="focus:bg-white/10 focus:text-white cursor-pointer">
           <User className="mr-2 h-4 w-4" /> Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem className="focus:bg-white/10 focus:text-white cursor-pointer">
+          <Link className="flex items-center gap-1" href={"/become-a-partner"}>
+            <Handshake className="mr-2 h-4 w-4" /> Partner with foodprime
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="focus:bg-white/10 focus:text-white cursor-pointer">
           <Settings className="mr-2 h-4 w-4" /> Settings
