@@ -1,4 +1,4 @@
-import Hero from "@/components/layouts/HeroSection";
+import Hero from "@/components/modules/Home/HeroSection";
 import React from "react";
 
 export default function Page() {

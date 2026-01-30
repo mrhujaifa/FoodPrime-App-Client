@@ -1,8 +1,15 @@
-"use client";
-
 import * as React from "react";
 import Image from "next/image";
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import {
+  Book,
+  Menu,
+  Sunset,
+  Trees,
+  Zap,
+  User,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import {
@@ -27,6 +34,24 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { userService } from "@/services/user.services";
+
+// --- Types ---
+interface SessionUser {
+  id: string;
+  email: string;
+  name?: string | null;
+  image?: string | null;
+}
 
 interface MenuItem {
   title: string;
@@ -36,14 +61,13 @@ interface MenuItem {
   items?: MenuItem[];
 }
 
-interface Navbar1Props {
+interface NavbarProps {
   className?: string;
   logo?: {
     url: string;
     src: string;
     alt: string;
     title: string;
-    className?: string;
   };
   menu?: MenuItem[];
   auth?: {
@@ -52,7 +76,7 @@ interface Navbar1Props {
   };
 }
 
-const Navbar = ({
+const Navbar = async ({
   logo = {
     url: "/",
     src: "https://orgass.myshopify.com/cdn/shop/files/logo-1.png?v=1641276560",
@@ -67,44 +91,36 @@ const Navbar = ({
       items: [
         {
           title: "Blog",
-          description: "The latest industry news, updates, and info",
-          icon: <Book className="size-5 shrink-0" />,
+          description: "Latest industry news",
+          icon: <Book className="size-5" />,
           url: "#",
         },
         {
           title: "Company",
-          description: "Our mission is to innovate and empower the world",
-          icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Careers",
-          description: "Browse job listing and discover our workspace",
-          icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Support",
-          description:
-            "Get in touch with our support team or visit our community forums",
-          icon: <Zap className="size-5 shrink-0" />,
+          description: "Our mission",
+          icon: <Trees className="size-5" />,
           url: "#",
         },
       ],
     },
     { title: "Pricing", url: "#" },
-    { title: "Blog", url: "#" },
+    { title: "Meals", url: "/meals" },
   ],
   auth = {
-    login: { title: "Login", url: "#" },
-    signup: { title: "Sign up", url: "#" },
+    login: { title: "Login", url: "/login" },
+    signup: { title: "Sign up", url: "/signup" },
   },
   className,
-}: Navbar1Props) => {
+}: NavbarProps) => {
+  const sessionResponse = await userService.getSession();
+  const user = sessionResponse?.data?.user as SessionUser | undefined;
+
+  console.log(sessionResponse.data.user.id);
+
   return (
     <section
       className={cn(
-        "sticky top-0 z-50 w-full bg-black fixed py-3 text-white border-b border-white/10",
+        "top-0 z-50 w-full bg-black fixed  py-4 text-white border-b border-white/10",
         className,
       )}
     >
@@ -119,36 +135,41 @@ const Navbar = ({
                 className="max-h-9 object-contain brightness-0 invert"
                 alt={logo.alt}
               />
-              <span className="text-xl font-bold tracking-tight text-white">
-                {logo.title}
-              </span>
             </a>
           </div>
 
           <div className="flex justify-center">
             <NavigationMenu>
               <NavigationMenuList className="gap-1">
-                {menu.map((item) => renderMenuItem(item))}
+                {menu.map((item) => (
+                  <MenuItemComponent key={item.title} item={item} />
+                ))}
               </NavigationMenuList>
             </NavigationMenu>
           </div>
 
-          <div className="flex justify-end gap-3">
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/10 hover:text-white"
-            >
-              <a href={auth.login.url}>{auth.login.title}</a>
-            </Button>
-            <Button
-              asChild
-              size="sm"
-              className="bg-white text-black hover:bg-gray-200"
-            >
-              <a href={auth.signup.url}>{auth.signup.title}</a>
-            </Button>
+          <div className="flex justify-end gap-3 items-center">
+            {user ? (
+              <ProfileDropdown user={user} />
+            ) : (
+              <>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/10"
+                >
+                  <a href={auth.login.url}>{auth.login.title}</a>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  className="bg-white text-black hover:bg-gray-200 border-none"
+                >
+                  <a href={auth.signup.url}>{auth.signup.title}</a>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
@@ -160,74 +181,131 @@ const Navbar = ({
               alt={logo.alt}
             />
           </a>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/10"
+          <div className="flex items-center gap-4">
+            {user && <ProfileDropdown user={user} />}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-white">
+                  <Menu className="size-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                className="bg-black text-white border-white/10"
               >
-                <Menu className="size-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="w-[300px] bg-black text-white border-white/10"
-            >
-              <SheetHeader className="text-left">
-                <SheetTitle className="text-white">Navigation</SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col gap-8 mt-8">
-                <Accordion type="single" collapsible className="w-full">
-                  {menu.map((item) => renderMobileMenuItem(item))}
-                </Accordion>
-                <div className="flex flex-col gap-3">
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="border-white/20 text-white hover:bg-white hover:text-black"
-                  >
-                    <a href={auth.login.url}>{auth.login.title}</a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="bg-white text-black hover:bg-gray-200"
-                  >
-                    <a href={auth.signup.url}>{auth.signup.title}</a>
-                  </Button>
+                <SheetHeader className="text-left">
+                  <SheetTitle className="text-white">Navigation</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-8 mt-8">
+                  <Accordion type="single" collapsible className="w-full">
+                    {menu.map((item) => (
+                      <MobileMenuItem key={item.title} item={item} />
+                    ))}
+                  </Accordion>
+                  {!user && (
+                    <div className="flex flex-col gap-3">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="border-white/20 text-white hover:bg-white/10"
+                      >
+                        <a href={auth.login.url}>{auth.login.title}</a>
+                      </Button>
+                      <Button asChild className="bg-white text-black">
+                        <a href={auth.signup.url}>{auth.signup.title}</a>
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-const renderMenuItem = (item: MenuItem) => {
+const ProfileDropdown = ({ user }: { user: SessionUser }) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="relative h-9 w-9 rounded-full p-0 border border-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
+        >
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user.image || ""} alt={user.name || "User"} />
+            <AvatarFallback className="bg-zinc-800 text-white">
+              {user.name
+                ? user.name.charAt(0).toUpperCase()
+                : user.email.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="w-56 mt-2 bg-zinc-950 border border-white/10 text-white shadow-2xl"
+        align="end"
+      >
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {user.name || "User"}
+            </p>
+            <p className="text-xs leading-none text-zinc-400">{user.email}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuItem className="focus:bg-white/10 focus:text-white cursor-pointer">
+          <User className="mr-2 h-4 w-4" /> Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem className="focus:bg-white/10 focus:text-white cursor-pointer">
+          <Settings className="mr-2 h-4 w-4" /> Settings
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuItem className="focus:bg-red-500/10 text-red-400 focus:text-red-400 cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" /> Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const MenuItemComponent = ({ item }: { item: MenuItem }) => {
   if (item.items) {
     return (
-      <NavigationMenuItem key={item.title}>
-        <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10">
+      <NavigationMenuItem>
+        <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 focus:bg-white/10 data-[state=open]:bg-white/10">
           {item.title}
         </NavigationMenuTrigger>
-        <NavigationMenuContent className="bg-black border border-white/10">
-          <div className="grid w-[450px] gap-3 p-4">
-            {item.items.map((subItem) => (
-              <SubMenuLink key={subItem.title} item={subItem} />
+        <NavigationMenuContent className="bg-black border border-white/10 shadow-2xl">
+          <div className="grid w-[400px] gap-2 p-4">
+            {item.items.map((sub) => (
+              <a
+                key={sub.title}
+                href={sub.url}
+                className="flex gap-4 rounded-md p-3 hover:bg-white/10 transition-colors"
+              >
+                <div className="mt-1">{sub.icon}</div>
+                <div>
+                  <div className="text-sm font-semibold">{sub.title}</div>
+                  <p className="text-sm text-zinc-400 line-clamp-2">
+                    {sub.description}
+                  </p>
+                </div>
+              </a>
             ))}
           </div>
         </NavigationMenuContent>
       </NavigationMenuItem>
     );
   }
-
   return (
-    <NavigationMenuItem key={item.title}>
+    <NavigationMenuItem>
       <NavigationMenuLink
         href={item.url}
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 hover:text-white"
+        className="px-4 py-2 text-sm font-medium hover:bg-white/10 rounded-md transition-colors"
       >
         {item.title}
       </NavigationMenuLink>
@@ -235,58 +313,26 @@ const renderMenuItem = (item: MenuItem) => {
   );
 };
 
-const renderMobileMenuItem = (item: MenuItem) => {
+const MobileMenuItem = ({ item }: { item: MenuItem }) => {
   if (item.items) {
     return (
-      <AccordionItem
-        key={item.title}
-        value={item.title}
-        className="border-none"
-      >
+      <AccordionItem value={item.title} className="border-none">
         <AccordionTrigger className="py-2 text-lg font-medium hover:no-underline">
           {item.title}
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-2 pl-4 mt-2">
-          {item.items.map((subItem) => (
-            <a
-              key={subItem.title}
-              href={subItem.url}
-              className="text-muted-foreground hover:text-white py-1"
-            >
-              {subItem.title}
+        <AccordionContent className="flex flex-col gap-2 pl-4 border-l border-white/10 ml-2">
+          {item.items.map((sub) => (
+            <a key={sub.title} href={sub.url} className="text-zinc-400 py-1">
+              {sub.title}
             </a>
           ))}
         </AccordionContent>
       </AccordionItem>
     );
   }
-
   return (
-    <a
-      key={item.title}
-      href={item.url}
-      className="py-2 text-lg font-medium block"
-    >
+    <a href={item.url} className="py-2 text-lg font-medium block">
       {item.title}
-    </a>
-  );
-};
-
-const SubMenuLink = ({ item }: { item: MenuItem }) => {
-  return (
-    <a
-      className="flex flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-white/10"
-      href={item.url}
-    >
-      <div className="text-white">{item.icon}</div>
-      <div>
-        <div className="text-sm font-semibold text-white">{item.title}</div>
-        {item.description && (
-          <p className="text-sm leading-snug text-gray-400 mt-1">
-            {item.description}
-          </p>
-        )}
-      </div>
     </a>
   );
 };
