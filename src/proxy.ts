@@ -27,20 +27,6 @@ export async function proxy(request: NextRequest) {
   // ) {
   //   return NextResponse.redirect(new URL("/", request.url));
   // }
-  // লুপ মুক্ত সঠিক লজিক
-  // if (
-  //   isAuthenticated &&
-  //   (pathname.startsWith("/login") || pathname.startsWith("/signup"))
-  // ) {
-  //   return NextResponse.redirect(new URL("/", request.url));
-  // }
-
-  // if (
-  //   isAuthenticated &&
-  //   (pathname.startsWith("/login") || pathname.startsWith("/signup"))
-  // ) {
-  //   return NextResponse.redirect(new URL("/", request.url));
-  // }
 
   //* User is authenticated and role = ADMIN
   //* User can not visit user dashboard
@@ -65,6 +51,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  // if (!isAuthenticated && pathname.startsWith("/restaurant/:id")) {
+  //   return NextResponse.redirect(new URL("/login", request.url));
+  // }
   return NextResponse.next();
 }
 

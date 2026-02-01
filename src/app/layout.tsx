@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${openSans.variable} antialiased`}>
+      <body className={`${openSans.variable} `}>
         <Toaster position="top-right" richColors />
         {children}
       </body>

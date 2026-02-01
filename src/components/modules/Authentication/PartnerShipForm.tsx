@@ -13,6 +13,7 @@ import {
 import { toast } from "sonner";
 import { PartnerShipSchema } from "@/schemas/provider.schema";
 import { providerServices } from "@/services/provider.services";
+import { ICreateProviderProfile } from "@/types/provider/providerProfile";
 
 export default function ProviderPartnershipForm() {
   const brandColor = "#58ac79";
@@ -62,7 +63,7 @@ export default function ProviderPartnershipForm() {
     setLoading(true);
     try {
       const response = await providerServices.createProviderProfile(
-        validation.data,
+        validation.data as ICreateProviderProfile,
       );
 
       if (response.success) {
@@ -78,7 +79,7 @@ export default function ProviderPartnershipForm() {
       } else {
         toast.error(response.message || "Something went wrong");
         if (response.errors) {
-          setErrors(response.errors as Record<string, string>);
+          setErrors(response.errors as Record<string, string[]>);
         }
       }
     } catch (error) {

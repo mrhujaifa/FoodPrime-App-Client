@@ -17,16 +17,18 @@ import {
   LogOut,
   Settings,
   ClipboardList,
+  UserRound,
 } from "lucide-react";
 import logo from "../../../public/logos/logo5.png";
 import { usePathname } from "next/navigation";
-import { getSessionAction } from "@/actions/user.actions";
+import { getSessionAction, handleSignOutServer } from "@/actions/user.actions";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [session, setSession] = useState<any>(null);
+
   const [loading, setLoading] = useState(true);
 
   const pathname = usePathname();
@@ -70,7 +72,7 @@ const Navbar = () => {
             <div className="relative w-10 h-10">
               <Image src={logo} alt="Brand Logo" width={40} height={40} />
             </div>
-            <span className="text-xl text-yellow-400 tracking-tight">
+            <span className="text-xl text-yellow-300 tracking-tight">
               foodprime
             </span>
           </div>
@@ -92,12 +94,18 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6">
             {!loading && !session?.user ? (
               <>
-                <button className="text-gray-700 border text-sm rounded-sm border-black px-4 py-1">
+                <Link
+                  href={"/login"}
+                  className="text-gray-700 border text-sm rounded-sm border-black px-4 py-1"
+                >
                   Log in
-                </button>
-                <button className="bg-yellow-300 hover:bg-yellow-400 px-5 text-sm py-1.5 rounded-sm">
+                </Link>
+                <Link
+                  href={"/signup"}
+                  className="bg-yellow-300 hover:bg-yellow-400 px-5 text-sm py-1.5 rounded-sm"
+                >
                   Sign up for Free Delivery
-                </button>
+                </Link>
               </>
             ) : (
               <div className="relative" ref={userMenuRef}>
@@ -105,15 +113,15 @@ const Navbar = () => {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center gap-2 hover:bg-gray-50 p-1 rounded-md transition-all"
                 >
-                  <div className="bg-yellow-400 p-1.5 rounded-full text-white">
-                    <UserIcon size={18} />
+                  <div className="">
+                    <UserRound size={20} />
                   </div>
                   <span className="text-sm font-bold text-gray-800">
                     {session?.user?.name}
                   </span>
                   <ChevronDown
-                    size={14}
-                    className={`transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`}
+                    size={24}
+                    className={`transition-transform ${isUserMenuOpen ? "rotate-180" : ""} text-yellow-300`}
                   />
                 </button>
 
@@ -139,7 +147,8 @@ const Navbar = () => {
                     </Link>
                     <hr className="my-1 border-gray-100" />
                     <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                      <LogOut size={16} /> Log out
+                      <LogOut size={16} />{" "}
+                      <span onClick={handleSignOutServer}>Log out</span>
                     </button>
                   </div>
                 )}
@@ -153,7 +162,7 @@ const Navbar = () => {
               >
                 <Globe size={20} />
                 <span className="text-sm">EN</span>
-                <ChevronDown size={14} />
+                <ChevronDown size={20} className="text-yellow-300" />
               </button>
               {isLangOpen && (
                 <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-md shadow-lg py-1">
@@ -169,7 +178,7 @@ const Navbar = () => {
 
             <div className="relative cursor-pointer text-gray-600 hover:text-black transition">
               <ShoppingCart size={24} />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-yellow-300  text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                 3
               </span>
             </div>
@@ -259,7 +268,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-2 text-gray-500 hover:text-gray-800 cursor-pointer transition-all">
-            <MapPin size={16} className="text-yellow-500" />
+            <MapPin size={16} className="text-yellow-300" />
             <span className="text-xs font-medium">
               Deliver to: <b className="text-gray-800">Your Current Location</b>
             </span>

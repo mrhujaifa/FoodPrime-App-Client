@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
       new URL(
         "https://orgass.myshopify.com/cdn/shop/files/logo-1.png?v=1641276560",
       ),
+      {
+        protocol: "https",
+        hostname: "i.ibb.co.com", // Error solve korar jonno hostname-ta eivabe dite hoy
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com", // Error solve korar jonno hostname-ta eivabe dite hoy
+      },
     ],
   },
 };

@@ -89,3 +89,57 @@ export interface MealsProvider {
 //   message: string;
 //   errors?: any;
 // }
+
+// ১. Provider টাইপ
+export interface ProviderProfile {
+  id: string;
+  businessName: string;
+  description?: string | null;
+  address?: string;
+  logoUrl?: string | null;
+  coverUrl?: string | null;
+  isOpen?: boolean;
+  isVerified?: boolean;
+  rating: number; // API তে 0 দেখাচ্ছে
+  totalReviews?: number;
+  estimatedDeliveryTime?: string | null;
+  deliveryFee?: string | number; // Decimal টাইপ অনেক সময় string হয়ে আসে
+}
+
+// ২. Count টাইপ (Prisma _count)
+export interface MealCount {
+  orderItems: number;
+  rivew: number; // আপনার স্কিমায় rivew বানানটি এমন আছে
+}
+
+// ৩. মেইন Meal বা MealsProvider টাইপ
+export interface MealsProviderProfile {
+  id: string;
+  name: string;
+  description: string;
+  businessName: string;
+  price: string | number; // API তে "100" string হিসেবে আসছে
+  discountPrice?: string | number | null; // API তে "20" string হিসেবে আসছে
+  imageUrl: string;
+  coverUrl?: string;
+  isAvailable: boolean;
+  isVeg: boolean;
+  spiciness: "NONE" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+  isBestseller: boolean;
+  prepTime?: number | null;
+  calories?: number | null;
+  categoryId: string;
+  providerId: string;
+  meals: Meal[];
+  createdAt: string; // ISO Date string
+  updatedAt: string;
+  provider: ProviderProfile; // রিলেশন ডেটা
+  _count?: MealCount;
+}
+
+// ৪. API Response স্ট্যান্ডার্ড টাইপ
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
