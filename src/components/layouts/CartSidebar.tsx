@@ -3,6 +3,7 @@ import { cartServices } from "@/services/cart.service";
 import { X, ShoppingBag, Plus, Minus, Trash2, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // --- Skeleton Component ---
 const CartSkeleton = () => (
@@ -61,6 +62,47 @@ const CartSidebarCom = ({
     (acc: number, item: any) => acc + (item.meal?.price || 0) * item.quantity,
     0,
   );
+  // Single Item Delete Handler
+  const handleDeleteItem = async (itemId: string) => {
+    if (isUpdating) return;
+    try {
+      setIsUpdating(itemId);
+      await cartServices.deleteItem(itemId);
+
+      // Success Toast
+      toast.success("Item removed from cart", {
+        description: "Your cart has been updated.",
+      });
+
+      await fetchCartData();
+    } catch (error) {
+      console.error("Failed to delete item", error);
+      toast.error("Could not delete item", {
+        description: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
+  // Clear All Cart Handler
+  const handleClearCart = async () => {
+    if (window.confirm("Are you sure you want to clear your cart?")) {
+      try {
+        await cartServices.clearCart();
+
+        // Success Toast
+        toast.success("Cart cleared", {
+          description: "All items have been removed.",
+        });
+
+        await fetchCartData();
+      } catch (error) {
+        console.error("Failed to clear cart", error);
+        toast.error("Failed to clear cart");
+      }
+    }
+  };
 
   return (
     <>
@@ -73,12 +115,24 @@ const CartSidebarCom = ({
         className={`fixed right-0 top-0 h-full w-full sm:w-[400px] bg-white z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Header */}
+        {/* Header section-e update koro */}
         <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="text-yellow-500" />
-            <span className="font-bold text-lg">
-              My Cart ({cartItems.length})
-            </span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="text-yellow-500" />
+              <span className="font-bold text-lg">
+                My Cart ({cartItems.length})
+              </span>
+            </div>
+            {/* Ekhane Clear All button-ti add koro */}
+            {cartItems.length > 0 && (
+              <button
+                onClick={handleClearCart}
+                className="text-xs text-red-500 hover:underline text-left mt-1"
+              >
+                Clear All
+              </button>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -150,7 +204,10 @@ const CartSidebarCom = ({
                         <Plus size={16} />
                       </button>
                     </div>
-                    <button className="text-red-500 hover:bg-red-50 p-1 rounded">
+                    <button
+                      onClick={() => handleDeleteItem(item.id)}
+                      className="text-red-500 hover:bg-red-50 p-1 rounded"
+                    >
                       <Trash2 size={18} />
                     </button>
                   </div>

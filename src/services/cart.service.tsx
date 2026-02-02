@@ -24,8 +24,7 @@ export const cartServices = {
 
       toast.success(result.message || "Added to cart!");
       return result.data;
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
       throw error;
     }
   },
@@ -44,8 +43,8 @@ export const cartServices = {
 
       if (!response.ok) return null;
       return result.data;
-    } catch (error: any) {
-      console.error("Cart fetch error:", error.message);
+    } catch (error) {
+      console.error("Cart fetch error:", error);
       return null;
     }
   },
@@ -76,8 +75,53 @@ export const cartServices = {
       }
 
       return result.data;
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Single Item Delete
+  async deleteItem(itemId: string) {
+    try {
+      const response = await fetch(`${apiURl}/cart/item/${itemId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Cookie ba Session-er jonno eita MUST
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to delete item");
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Clear Full Cart
+  async clearCart() {
+    try {
+      const response = await fetch(`${apiURl}/cart/clear`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to clear cart");
+      }
+
+      return result;
+    } catch (error) {
       throw error;
     }
   },
