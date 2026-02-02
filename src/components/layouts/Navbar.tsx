@@ -22,12 +22,18 @@ import {
 import logo from "../../../public/logos/logo5.png";
 import { usePathname } from "next/navigation";
 import { getSessionAction, handleSignOutServer } from "@/actions/user.actions";
+import CartSidebarCom from "./CartSidebar";
+import { cartServices } from "@/services/cart.service";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [session, setSession] = useState<any>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartIsloading, setCartIsloading] = useState(true);
+
+  const [cartData, setCartData] = useState<any>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -63,6 +69,26 @@ const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const fetchCartData = async () => {
+    try {
+      setCartIsloading(true);
+      const res = await cartServices.getCart();
+      setCartData(res);
+    } catch (error) {
+      console.error("Cart fetch error", error);
+    } finally {
+      setCartIsloading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user) {
+      fetchCartData();
+    }
+  }, [session]);
+
+  console.log(cartData);
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-50 top-0 left-0 border-b border-gray-100">
@@ -176,11 +202,16 @@ const Navbar = () => {
               )}
             </div>
 
-            <div className="relative cursor-pointer text-gray-600 hover:text-black transition">
+            <div
+              onClick={() => setIsCartOpen(true)}
+              className="relative cursor-pointer text-gray-600 hover:text-black transition"
+            >
               <ShoppingCart size={24} />
-              <span className="absolute -top-2 -right-2 bg-yellow-300  text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                3
-              </span>
+              {cartData?.items?.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-yellow-300 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartData.items.length}
+                </span>
+              )}
             </div>
           </div>
 
@@ -335,6 +366,14 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+      <CartSidebarCom
+        fetchCartData={fetchCartData}
+        data={cartData}
+        isOpen={isCartOpen}
+        isLoading={cartIsloading}
+        onClose={() => setIsCartOpen(false)}
+      />
     </nav>
   );
 };

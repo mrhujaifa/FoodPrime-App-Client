@@ -1,13 +1,33 @@
+"use client";
+import { cartServices } from "@/services/cart.service";
 import { Meal } from "@/types";
-import { Plus, Star, ShoppingBag } from "lucide-react";
+import { Plus, Star, ShoppingBag, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface MenuCardProps {
   meal: Meal;
 }
 
 export const MenuCard = ({ meal }: MenuCardProps) => {
+  const [loading, setLoading] = useState(false);
   const item = meal;
+
+  const id = meal.id;
+
+  const handleAddToCart = async () => {
+    setLoading(true);
+    try {
+      // Amader banano fetch service call
+      await cartServices.addToCart(id, 1);
+
+      // Icche korle ekhane Cart Sidebar-ke auto open korar logic dewa jay
+    } catch (error) {
+      console.error("Cart error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="group relative bg-white hover:bg-[#FDFDFD] rounded-[24px] p-3 border border-gray-100 hover:border-yellow-200 transition-all duration-500 flex items-center gap-5 w-full max-w-lg h-40 shadow-sm hover:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.08)]">
       {/* 1. Enhanced Image Section */}
@@ -55,12 +75,26 @@ export const MenuCard = ({ meal }: MenuCardProps) => {
           </div>
 
           {/* Action Button */}
-          <button className="group/btn h-10 w-10 bg-yellow-400 text-black rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(250,204,21,0.3)] hover:bg-black hover:text-yellow-400 transform hover:scale-105 active:scale-95 transition-all duration-300">
-            <Plus
-              size={20}
-              strokeWidth={3}
-              className="group-hover/btn:rotate-90 transition-transform duration-300"
-            />
+          <button
+            onClick={handleAddToCart}
+            disabled={loading}
+            className={`group/btn h-10 w-10 bg-yellow-400 text-black rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(250,204,21,0.3)] 
+        ${!loading ? "hover:bg-black hover:text-yellow-400 transform hover:scale-105 active:scale-95" : "opacity-70 cursor-not-allowed"} 
+        transition-all duration-300`}
+          >
+            {loading ? (
+              <Loader2
+                size={18}
+                strokeWidth={3}
+                className="animate-spin text-black"
+              />
+            ) : (
+              <Plus
+                size={20}
+                strokeWidth={3}
+                className="group-hover/btn:rotate-90 transition-transform duration-300"
+              />
+            )}
           </button>
         </div>
       </div>

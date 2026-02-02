@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com", // Error solve korar jonno hostname-ta eivabe dite hoy
       },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com", // Error solve korar jonno hostname-ta eivabe dite hoy
+      },
     ],
   },
 };
