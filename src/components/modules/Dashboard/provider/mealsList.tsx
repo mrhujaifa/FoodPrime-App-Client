@@ -22,7 +22,6 @@ export default function MealListPage() {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ১. এপিআই ফেচ ফাংশন
   const fetchProviderMeals = async () => {
     setLoading(true);
     try {
@@ -37,7 +36,7 @@ export default function MealListPage() {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        setMeals(result.data); // result.data এখন আপনার Meal[]
+        setMeals(result.data);
       } else {
         toast.error(result.message || "Failed to load meals");
       }
@@ -52,22 +51,6 @@ export default function MealListPage() {
   useEffect(() => {
     fetchProviderMeals();
   }, []);
-
-  // ২. স্ট্যাটাস আপডেট লজিক (রিয়েল এপিআই কল এখানে করবেন)
-  const toggleStatus = async (id: string, currentStatus: boolean) => {
-    try {
-      // এপিআই কল দিয়ে সার্ভারে স্ট্যাটাস আপডেট করবেন (প্যাচ/পুট মেথড)
-      // আপাতত লোকাল স্টেট আপডেট দেখাচ্ছি:
-      setMeals((prev) =>
-        prev.map((meal) =>
-          meal.id === id ? { ...meal, isAvailable: !currentStatus } : meal,
-        ),
-      );
-      toast.success("Status updated successfully");
-    } catch (error) {
-      toast.error("Failed to update status");
-    }
-  };
 
   return (
     <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
@@ -178,9 +161,6 @@ export default function MealListPage() {
                       </td>
                       <td className="p-4">
                         <button
-                          onClick={() =>
-                            toggleStatus(meal.id, meal.isAvailable)
-                          }
                           className={`inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold transition-all border ${
                             meal.isAvailable
                               ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
@@ -196,7 +176,7 @@ export default function MealListPage() {
                       <td className="p-4 text-right">
                         <div className="flex justify-end gap-3">
                           <Link
-                            href={`/provider/meals/edit/${meal.id}`}
+                            href={`/dashboard/provider/meals/edit/${meal.id}`}
                             className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all border border-blue-100 shadow-sm"
                             title="Edit Item"
                           >

@@ -144,9 +144,42 @@ export interface MealsProviderProfile {
   _count?: MealCount;
 }
 
-// ৪. API Response স্ট্যান্ডার্ড টাইপ
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
 }
+
+export interface IMeal {
+  id: string;
+  name: string;
+  description: string;
+  price: number | string;
+  discountPrice?: number | string | null;
+  imageUrl?: string | null;
+  isAvailable: boolean;
+  isVeg: boolean;
+  spiciness: Spicy;
+  isBestseller: boolean;
+  prepTime?: number | null;
+  calories?: number | null;
+  categoryId: string;
+  providerId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export type UpdateMealPayload = {
+  name?: string;
+  description?: string;
+  price?: number | string;
+  discountPrice?: number | string | null;
+  imageUrl?: string | null;
+  isAvailable?: boolean;
+  isVeg?: boolean;
+  spiciness?: Spicy;
+  isBestseller?: boolean;
+  prepTime?: number | string;
+  calories?: number | string;
+  categoryId?: string;
+};

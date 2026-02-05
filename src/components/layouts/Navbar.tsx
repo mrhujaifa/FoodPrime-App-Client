@@ -18,6 +18,7 @@ import {
   Settings,
   ClipboardList,
   UserRound,
+  LayoutDashboardIcon,
 } from "lucide-react";
 import logo from "../../../public/logos/logo5.png";
 import { usePathname } from "next/navigation";
@@ -164,6 +165,12 @@ const Navbar = () => {
                       className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       <ClipboardList size={16} /> My Orders
+                    </Link>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <LayoutDashboardIcon size={16} /> Dashboard
                     </Link>
                     <Link
                       href="/settings"
