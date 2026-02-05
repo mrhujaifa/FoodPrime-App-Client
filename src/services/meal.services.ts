@@ -2,7 +2,6 @@ import { Meal } from "@/types";
 
 export const mealServices = {
   getAllMeals: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     const url = `http://localhost:8080/api/meals`;
 
     try {

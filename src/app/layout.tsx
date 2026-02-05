@@ -12,7 +12,7 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "FoodHub",
+  title: "Food Prime",
   description: "Discover & Order Delicious Meals",
 };
 

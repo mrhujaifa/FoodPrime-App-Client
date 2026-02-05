@@ -2,6 +2,7 @@
 import { cartServices } from "@/services/cart.service";
 import { X, ShoppingBag, Plus, Minus, Trash2, Loader2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -228,8 +229,9 @@ const CartSidebarCom = ({
               <span className="text-gray-600">Subtotal</span>
               <span className="font-bold text-xl">৳ {subtotal.toFixed(2)}</span>
             </div>
+
             <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition active:scale-95">
-              Proceed to Checkout
+              <Link href={"/orders/checkout"}>Proceed to Checkout</Link>
             </button>
           </div>
         )}

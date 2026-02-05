@@ -112,6 +112,12 @@ export interface MealCount {
   rivew: number; // আপনার স্কিমায় rivew বানানটি এমন আছে
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  image?: string | null;
+}
+
 // ৩. মেইন Meal বা MealsProvider টাইপ
 export interface MealsProviderProfile {
   id: string;
@@ -130,6 +136,7 @@ export interface MealsProviderProfile {
   calories?: number | null;
   categoryId: string;
   providerId: string;
+  category?: Category;
   meals: Meal[];
   createdAt: string; // ISO Date string
   updatedAt: string;
