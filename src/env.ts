@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    
     AUTH_URL: z.string().url(),
   },
 
