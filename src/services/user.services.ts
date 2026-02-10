@@ -12,7 +12,7 @@ export const userService = {
         headers: {
           cookie: (await cookies()).toString(),
         },
-        cache: "no-store",
+
         credentials: "include",
       });
 
