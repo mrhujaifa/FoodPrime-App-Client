@@ -7,7 +7,6 @@ export default async function AllUsers() {
   const response = await adminServices.getAllUsers({
     cookie: requestHeader.get("cookie") || "",
   });
-
   const users = await response.data;
 
   return (

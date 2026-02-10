@@ -1,5 +1,5 @@
 import { Route } from "@/types";
-import { RouteIcon, User } from "lucide-react";
+import { ListOrdered, RouteIcon, User } from "lucide-react";
 
 export const adminRoutes: Route[] = [
   {
@@ -24,6 +24,11 @@ export const adminRoutes: Route[] = [
         icon: User,
         title: "All Users",
         url: "/dashboard/admin/users",
+      },
+      {
+        icon: ListOrdered,
+        title: "All Orders",
+        url: "/dashboard/admin/orders",
       },
     ],
   },
