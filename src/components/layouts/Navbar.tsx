@@ -103,12 +103,12 @@ const Navbar = () => {
     <nav className="bg-white shadow-md fixed w-full z-50 top-0 left-0 border-b border-gray-100">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2 gap-4">
-          <div className="flex-shrink-0 flex items-center gap-3 cursor-pointer">
+          <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
             <div className="relative w-10 h-10">
               <Image src={logo} alt="Brand Logo" width={40} height={40} />
             </div>
-            <span className="text-xl text-yellow-300 tracking-tight">
-              foodprime
+            <span className="text-xl font-black text-gray-900 tracking-tighter italic">
+              food<span className="text-yellow-500">prime</span>
             </span>
           </div>
 
