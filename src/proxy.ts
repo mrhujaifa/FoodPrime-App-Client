@@ -16,17 +16,18 @@ export async function proxy(request: NextRequest) {
     isCustomer = data.user.role === Roles.customer;
   }
 
-  //* User in not authenticated at all
   if (!isAuthenticated) {
+    // If NOT authenticated, allow only login/signup
+    if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // if (
-  //   (isAuthenticated && pathname.startsWith("/login")) ||
-  //   pathname.startsWith("/signup")
-  // ) {
-  //   return NextResponse.redirect(new URL("/", request.url));
-  // }
+  // If authenticated, block /login and /signup
+  if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 
   //* User is authenticated and role = ADMIN
   //* User can not visit user dashboard
@@ -51,17 +52,20 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // if (!isAuthenticated && pathname.startsWith("/restaurant/:id")) {
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
+  if (!isAuthenticated && pathname.startsWith("/orders")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
+    "/login",
+    "/signup",
     "/dashboard",
     "/dashboard/:path*",
     "/dashboard/admin",
     "/dashboard/admin/:path*",
+    "/orders",
   ],
 };

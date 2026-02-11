@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -21,10 +21,10 @@ import {
   LayoutDashboardIcon,
 } from "lucide-react";
 import logo from "../../../public/logos/logo5.png";
-import { usePathname } from "next/navigation";
-import { getSessionAction, handleSignOutServer } from "@/actions/user.actions";
+import { usePathname, useRouter } from "next/navigation";
 import CartSidebarCom from "./CartSidebar";
 import { cartServices } from "@/services/cart.service";
+import { authClient } from "@/lib/auth-client";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,23 +40,21 @@ const Navbar = () => {
 
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const isActive = (path: string) => pathname === path;
 
+  const { data, isPending, error, refetch } = authClient.useSession();
+
   useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const { data, error } = await getSessionAction();
-        if (data) setSession(data);
-      } catch (err) {
-        console.error("Failed to fetch session:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSession();
-  }, []);
+    if (data) {
+      setSession(data);
+    } else {
+      setSession(null);
+    }
+    setLoading(false);
+  }, [data]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -90,6 +88,16 @@ const Navbar = () => {
   }, [session]);
 
   console.log(cartData);
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+      router.push("/login"); // Redirect to home page after sign out
+      router.refresh(); // Refresh the page to update the UI after sign out
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-50 top-0 left-0 border-b border-gray-100">
@@ -179,9 +187,11 @@ const Navbar = () => {
                       <Settings size={16} /> Settings
                     </Link>
                     <hr className="my-1 border-gray-100" />
-                    <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                      <LogOut size={16} />{" "}
-                      <span onClick={handleSignOutServer}>Log out</span>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full flex items-center gap-2 px-4 py-2 cursor-pointer text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <LogOut size={16} /> <span>Log out</span>
                     </button>
                   </div>
                 )}

@@ -14,9 +14,9 @@ import {
   UserRound,
 } from "lucide-react";
 import logo from "../../../public/logos/logo5.png";
-import { getSessionAction, handleSignOutServer } from "@/actions/user.actions";
 import CartSidebarCom from "./CartSidebar";
 import { cartServices } from "@/services/cart.service";
+import { authClient } from "@/lib/auth-client";
 
 const SecNavbar = () => {
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -29,19 +29,16 @@ const SecNavbar = () => {
 
   const userMenuRef = useRef<HTMLDivElement>(null);
 
+  const { data, isPending, error, refetch } = authClient.useSession();
+
   useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const { data } = await getSessionAction();
-        if (data) setSession(data);
-      } catch (err) {
-        console.error("Failed to fetch session:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSession();
-  }, []);
+    if (data) {
+      setSession(data);
+    } else {
+      setSession(null);
+    }
+    setLoading(false);
+  }, [data]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,6 +70,16 @@ const SecNavbar = () => {
       fetchCartData();
     }
   }, [session]);
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+      // Optional: Redirect the user after successful sign out
+      // window.location.href = "/";
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-50 top-0 left-0 border-b border-gray-100">
@@ -159,8 +166,8 @@ const SecNavbar = () => {
                     </Link>
                     <hr className="my-1 border-gray-100" />
                     <button
-                      onClick={handleSignOutServer}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      onClick={handleSignOut}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm cursor-pointer text-red-600 hover:bg-red-50"
                     >
                       <LogOut size={16} /> Log out
                     </button>
