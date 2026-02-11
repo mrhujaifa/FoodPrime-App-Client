@@ -1,5 +1,4 @@
 import Footer from "@/components/layouts/Footer";
-import Navbar from "@/components/layouts/Navbar";
 import NavbarMain from "@/components/layouts/navbar/index";
 
 export default function CommonLayout({

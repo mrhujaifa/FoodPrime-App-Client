@@ -35,22 +35,8 @@ const AllRestaurants = ({ mealsData }: AllRestaurantsProps) => {
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <div className="text-center py-20">
-  //       <p className="text-red-500 font-semibold">{error}</p>
-  //       <button
-  //         onClick={() => window.location.reload()}
-  //         className="mt-4 px-4 py-2 bg-[#D70F64] text-white rounded-lg"
-  //       >
-  //         Try Again
-  //       </button>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 font-sans bg-white">
+    <div className="max-w-7xl mx-auto font-sans bg-white">
       <h1 className="text-[26px] font-bold text-[#1f1f1f] mb-8">
         All restaurants
       </h1>

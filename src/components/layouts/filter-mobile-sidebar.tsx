@@ -1,0 +1,168 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { RotateCcw } from "lucide-react";
+
+export type FilterState = {
+  cuisines: string[];
+  dietary: string[];
+  price: string | null;
+};
+
+interface FilterSidebarProps {
+  onApply: (filters: FilterState) => void;
+}
+
+export function FilterSidebarUIMobile({ onApply }: FilterSidebarProps) {
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
+  const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+
+  // ✅ user interaction না হওয়া পর্যন্ত apply হবে না
+  const hasInteracted = useRef(false);
+
+  useEffect(() => {
+    if (!hasInteracted.current) return; // ⛔ mount / strict mode এ apply হবে না
+
+    onApply({
+      cuisines: selectedCuisines,
+      dietary: selectedDietary,
+      price: selectedPrice,
+    });
+  }, [selectedCuisines, selectedDietary, selectedPrice]);
+
+  const handleCheckboxChange = (
+    value: string,
+    state: string[],
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
+  ) => {
+    hasInteracted.current = true; // ✅ user action mark
+    if (state.includes(value)) {
+      setter(state.filter((item) => item !== value));
+    } else {
+      setter([...state, value]);
+    }
+  };
+
+  const handleReset = () => {
+    hasInteracted.current = true; // ✅ user action mark
+    setSelectedCuisines([]);
+    setSelectedDietary([]);
+    setSelectedPrice(null);
+  };
+
+  return (
+    <aside className="w-full bg-white p-4">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-bold text-gray-800">Filter</h2>
+        <button
+          onClick={handleReset}
+          className="text-gray-400 hover:text-red-500 transition-colors"
+        >
+          <RotateCcw size={18} />
+        </button>
+      </div>
+
+      {/* Cuisine Section */}
+      <div className="mb-8">
+        <h3 className="font-bold text-sm uppercase tracking-wider text-gray-500 mb-4">
+          Cuisine
+        </h3>
+        <div className="space-y-3">
+          {[
+            "Bengali",
+            "Indian",
+            "Italian",
+            "Chinese",
+            "Fast Food",
+            "Thai",
+            "Mexican",
+            "Arabic",
+            "Continental",
+            "Dessert",
+          ].map((c) => (
+            <label key={c} className="flex items-center group cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedCuisines.includes(c)}
+                onChange={() =>
+                  handleCheckboxChange(c, selectedCuisines, setSelectedCuisines)
+                }
+                className="peer h-5 w-5 appearance-none rounded border-2 border-gray-200 checked:bg-yellow-300 checked:border-yellow-300 transition-all cursor-pointer"
+              />
+              <span className="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
+                {c}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Dietary Section */}
+      <div className="mb-8">
+        <h3 className="font-bold text-sm uppercase tracking-wider text-gray-500 mb-4">
+          Dietary
+        </h3>
+        <div className="space-y-3">
+          {["Vegetarian", "Vegan", "Halal", "Gluten Free"].map((d) => (
+            <label key={d} className="flex items-center group cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedDietary.includes(d)}
+                onChange={() =>
+                  handleCheckboxChange(d, selectedDietary, setSelectedDietary)
+                }
+                className="peer h-5 w-5 appearance-none rounded border-2 border-gray-200 checked:bg-yellow-300 checked:border-yellow-300 transition-all cursor-pointer"
+              />
+              <span className="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
+                {d}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Price Section */}
+      <div className="mb-6">
+        <h3 className="font-bold text-sm uppercase tracking-wider text-gray-500 mb-4">
+          Price
+        </h3>
+        <div className="space-y-3">
+          {[
+            { label: "Low", value: "Low" },
+            { label: "Medium", value: "Medium" },
+            { label: "High", value: "High" },
+          ].map((p) => (
+            <label
+              key={p.label}
+              className="flex items-center group cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="price"
+                checked={selectedPrice === p.value}
+                onChange={() => {
+                  hasInteracted.current = true; // ✅ user action mark
+                  setSelectedPrice(p.value);
+                }}
+                className="peer h-5 w-5 appearance-none rounded-full border-2 border-gray-200 checked:border-yellow-400 checked:bg-yellow-300 cursor-pointer"
+              />
+              <span className="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
+                {p.label}
+              </span>
+            </label>
+          ))}
+        </div>
+        <button
+          onClick={() => {
+            hasInteracted.current = true; // ✅ user action mark
+            setSelectedPrice(null);
+          }}
+          className="text-xs font-bold text-yellow-600 mt-4 hover:underline"
+        >
+          Clear price filter
+        </button>
+      </div>
+    </aside>
+  );
+}
