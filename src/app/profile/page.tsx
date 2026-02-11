@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getSessionAction } from "@/actions/user.actions";
+
 import {
-  User,
   Mail,
   Phone,
   Lock,
@@ -14,29 +13,29 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import SecNavbar from "@/components/layouts/HeaderNav";
+import { useUser } from "@/hooks/useSession";
 
 export default function ManageProfile() {
-  const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [user, setUser] = useState<any>(null);
 
+  // loading variable-ti ekhane 'sessionLoading' name rename kora hoyeche duplicate avoid korte
+  const { user: currentUser, isLoading: sessionLoading } = useUser();
+
+  // Local state for UI loading control
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await getSessionAction();
-        if (res?.data?.user) setUser(res.data.user);
-      } catch (error) {
-        toast.error("Failed to load profile");
-      } finally {
-        // লোডিং ফিলটা দেখার জন্য সামান্য ডিলে দেওয়া হয়েছে
-        setTimeout(() => setLoading(false), 800);
+    if (!sessionLoading) {
+      if (currentUser) {
+        setUser(currentUser);
       }
-    };
-    fetchUser();
-  }, []);
+      setIsInitialLoading(false);
+    }
+  }, [currentUser, sessionLoading]);
 
   // --- Skeleton Loading UI ---
-  if (loading)
+  if (isInitialLoading)
     return (
       <div className="min-h-screen bg-[#FAFAFA]">
         <SecNavbar />
@@ -77,7 +76,10 @@ export default function ManageProfile() {
             <div className="relative">
               <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
                 <img
-                  src={user?.image || "https://ui-avatars.com/api/?name=User"}
+                  src={
+                    user?.image ||
+                    `https://ui-avatars.com/api/?name=${user?.name || "User"}`
+                  }
                   className="w-full h-full object-cover"
                   alt="avatar"
                 />
@@ -109,6 +111,7 @@ export default function ManageProfile() {
                   </label>
                   <input
                     type="text"
+                    defaultValue={user?.name?.split(" ")[0]}
                     placeholder="First Name"
                     className="w-full bg-white border border-gray-200 rounded-xl py-2.5 px-4 focus:border-gray-900 outline-none transition-all text-sm"
                   />
@@ -120,6 +123,7 @@ export default function ManageProfile() {
                   </label>
                   <input
                     type="text"
+                    defaultValue={user?.name?.split(" ")[1]}
                     placeholder="Last Name"
                     className="w-full bg-white border border-gray-200 rounded-xl py-2.5 px-4 focus:border-gray-900 outline-none transition-all text-sm"
                   />
@@ -213,7 +217,7 @@ export default function ManageProfile() {
             </div>
 
             {/* --- Action Button --- */}
-            <div className="flex  justify-center">
+            <div className="flex justify-center">
               <button
                 type="button"
                 onClick={() => {
@@ -224,7 +228,7 @@ export default function ManageProfile() {
                   }, 1000);
                 }}
                 disabled={updating}
-                className="bg-yellow-300 text-black/80 px-8 py-2.5 w-full rounded-xl font-medium text-sm hover:bg-black transition-all flex items-center gap-2 justify-center disabled:bg-gray-400"
+                className="bg-yellow-300 text-black/80 px-8 py-2.5 w-full rounded-xl font-medium text-sm hover:bg-black hover:text-white transition-all flex items-center gap-2 justify-center disabled:bg-gray-400"
               >
                 {updating ? (
                   <Loader2 className="animate-spin" size={16} />

@@ -55,6 +55,10 @@ export async function proxy(request: NextRequest) {
   if (!isAuthenticated && pathname.startsWith("/orders")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  if (!isAuthenticated && pathname.startsWith("/orders/checkout")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
   return NextResponse.next();
 }
 
@@ -67,5 +71,6 @@ export const config = {
     "/dashboard/admin",
     "/dashboard/admin/:path*",
     "/orders",
+    "/orders/checkout",
   ],
 };

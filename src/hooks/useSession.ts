@@ -1,44 +1,18 @@
-"use client";
+import { authClient } from "@/lib/auth-client";
+import { useMemo } from "react";
 
-import { useState, useEffect } from "react";
-import { getSessionAction } from "@/actions/user.actions";
+export const useUser = () => {
+  const { data: session, isPending, error, refetch } = authClient.useSession();
 
-// Typescript thakle interface add kora bhalo, na thakle any thakuk
-export const useSession = () => {
-  const [session, setSession] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchSession = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error: sessionError } = await getSessionAction();
-
-      if (sessionError) {
-        setError(sessionError.message);
-        setSession(null);
-      } else {
-        setSession(data);
-        setError(null);
-      }
-    } catch (err) {
-      setError("Failed to fetch session");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSession();
-  }, []);
+  // User details ke simplify kora
+  const user = useMemo(() => session?.user ?? null, [session]);
 
   return {
+    user,
     session,
-    isLoading,
+    isLoading: isPending,
+    isAuthenticated: !!session,
     error,
-    user: session?.user || null,
-    providerId: session?.user?.id || null,
-    isAuthenticated: !!session?.user,
-    refreshSession: fetchSession, // Jate dorkar hole manual refresh kora jay
+    refreshUser: refetch,
   };
 };

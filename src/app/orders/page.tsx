@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { orderServices } from "@/services/order.services";
 import { reviewServices } from "@/services/review.services";
-import { getSessionAction } from "@/actions/user.actions";
+
 import {
   Loader2,
   Package,
@@ -17,12 +17,14 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "@/components/layouts/Navbar";
+import { useUser } from "@/hooks/useSession";
 
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [userId, setUserId] = useState("");
+  const [session, setSession] = useState<any>(null);
 
   // Inline Review States (আইটেম ওয়াইজ ডাটা রাখার জন্য অবজেক্ট ব্যবহার করা হয়েছে)
   const [reviewData, setReviewData] = useState<{
@@ -32,17 +34,19 @@ export default function MyOrdersPage() {
 
   useEffect(() => {
     fetchOrders();
-    session();
   }, []);
 
-  const session = async () => {
-    try {
-      const res = await getSessionAction();
-      if (res?.data?.user?.id) setUserId(res.data.user.id);
-    } catch (error) {
-      console.log(error);
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      setSession(user);
+      setUserId(user.id);
+    } else {
+      setSession(null);
+      setUserId("");
     }
-  };
+  }, [user]);
 
   const fetchOrders = async () => {
     try {
