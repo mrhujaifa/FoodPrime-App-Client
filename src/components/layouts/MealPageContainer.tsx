@@ -10,6 +10,8 @@ import AllRestaurants from "@/components/modules/Restaurant/AllRestaurants";
 import SignUpBanner from "@/components/layouts/signUpBanner";
 import { Filter, X, SlidersHorizontal } from "lucide-react";
 import { FilterSidebarUIMobile } from "./filter-mobile-sidebar";
+import PartnerSection from "./PartnerShip";
+import DealsSection from "./DealsSection";
 
 interface MealPageContainerProps {
   initialMeals: MealsProviderProfile[];
@@ -166,6 +168,14 @@ export default function MealPageContainer({
                     </button>
                   </div>
                 )}
+              </div>
+
+              <div>
+                <DealsSection></DealsSection>
+              </div>
+
+              <div>
+                <PartnerSection />
               </div>
             </>
           )}

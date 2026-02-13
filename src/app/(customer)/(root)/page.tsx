@@ -1,3 +1,4 @@
+import AppDownloadSection from "@/components/layouts/PartnerShip";
 import MealPageContainer from "@/components/layouts/MealPageContainer";
 import { mealServices } from "@/services/meal.services";
 import { MealsProviderProfile } from "@/types";

@@ -38,13 +38,13 @@ const getAllUsers = async (customHeaders = {}) => {
 const changeUserStatus = async (
   userId: string, // whose status to change
   status: string, // new status value
-  customHeaders = {}, // cookies for authentication
+  cookieStore: any,
 ) => {
   const response = await fetch(`${adminAPI}/users/${userId}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      ...customHeaders,
+      Cookie: cookieStore,
     },
     credentials: "include",
     body: JSON.stringify({ status }),

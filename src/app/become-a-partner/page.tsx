@@ -5,7 +5,7 @@ export default function PartnerShip() {
   return (
     <div>
       <Navbar></Navbar>
-      <div className="mt-10">
+      <div className="mt-30">
         <PartnerShipForm />
       </div>
     </div>

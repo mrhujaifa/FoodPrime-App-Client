@@ -5,6 +5,7 @@ import { IUser } from "@/types";
 import { adminServices } from "@/services/admin.services";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { updateUserStatusAction } from "@/actions/admin.action";
 
 const getStatusStyles = (status: string) => {
   switch (status) {
@@ -28,7 +29,7 @@ export default function UserTable({ users }: { users: IUser[] }) {
   const handleStatusUpdate = (userId: string, newStatus: string) => {
     startTransition(async () => {
       try {
-        await adminServices.changeUserStatus(userId, newStatus);
+        await updateUserStatusAction(userId, newStatus);
         toast.success(`User is now ${newStatus}`);
         router.refresh();
       } catch (error) {

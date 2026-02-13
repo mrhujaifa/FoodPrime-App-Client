@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Star, Send, Loader2, User, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { reviewServices } from "@/services/review.services";
+import { createReviewsAction } from "@/actions/review.action";
 
 interface Props {
   mealId: string;
@@ -25,21 +26,15 @@ export default function ReviewSection({
     if (!comment.trim()) return toast.error("Please write a comment first!");
 
     setIsSubmitting(true);
-    const res = await reviewServices.createReview(
-      rating,
-      comment,
-      customerId,
-      mealId,
-    );
+    const res = await createReviewsAction(rating, comment, customerId, mealId);
 
-    if (res.success) {
+    if (res?.success) {
       toast.success("Review posted successfully!");
       setComment("");
       setRating(5);
-      // নতুন রিভিউটি লিস্টের সবার উপরে যোগ করা
       setReviews([res.data, ...reviews]);
     } else {
-      toast.error(res.message);
+      toast.error(res?.message);
     }
     setIsSubmitting(false);
   };
