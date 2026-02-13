@@ -5,6 +5,7 @@ import { Meal } from "@/types";
 import { Plus, Star, ShoppingBag, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface MenuCardProps {
   meal: Meal;
@@ -19,10 +20,8 @@ export const MenuCard = ({ meal }: MenuCardProps) => {
   const handleAddToCart = async () => {
     setLoading(true);
     try {
-      // Amader banano fetch service call
       await addToCartAction(id, 1);
-
-      // Icche korle ekhane Cart Sidebar-ke auto open korar logic dewa jay
+      toast.success("Yum! Added to cart.");
     } catch (error) {
       console.error("Cart error:", error);
     } finally {

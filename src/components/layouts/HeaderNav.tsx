@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
@@ -13,12 +14,12 @@ import {
   ClipboardList,
   UserRound,
   X,
-  Menu,
 } from "lucide-react";
 import logo from "../../../public/logos/logo5.png";
 import CartSidebarCom from "./CartSidebar";
-import { cartServices } from "@/services/cart.service";
 import { authClient } from "@/lib/auth-client";
+import { getCartItemAction } from "@/actions/cart.action";
+import { getSessionAction } from "@/actions/user.action";
 
 const SecNavbar = () => {
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -31,12 +32,22 @@ const SecNavbar = () => {
   const [loading, setLoading] = useState(true);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const { data } = authClient.useSession();
 
   useEffect(() => {
-    setSession(data || null);
-    setLoading(false);
-  }, [data]);
+    const fetchUserSession = async () => {
+      try {
+        setLoading(true);
+        const user = await getSessionAction();
+        setSession(user.data || null);
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserSession();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,7 +65,7 @@ const SecNavbar = () => {
   const fetchCartData = async () => {
     try {
       setCartIsloading(true);
-      const res = await cartServices.getCart();
+      const res = await getCartItemAction();
       setCartData(res);
     } catch (error) {
       console.error("Cart fetch error", error);

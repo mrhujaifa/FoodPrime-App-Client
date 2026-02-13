@@ -29,6 +29,7 @@ import { usePathname, useRouter } from "next/navigation";
 import CartSidebarCom from "./CartSidebar";
 import { cartServices } from "@/services/cart.service";
 import { authClient } from "@/lib/auth-client";
+import { getCartItemAction } from "@/actions/cart.action";
 
 const Navbar = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -69,7 +70,7 @@ const Navbar = () => {
   const fetchCartData = async () => {
     try {
       setCartIsloading(true);
-      const res = await cartServices.getCart();
+      const res = await getCartItemAction();
       setCartData(res);
     } catch (error) {
       console.error("Cart fetch error", error);

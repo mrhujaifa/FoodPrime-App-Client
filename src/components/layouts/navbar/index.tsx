@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
@@ -24,6 +25,7 @@ import { MobileSearch, MobileBottomNav } from "./mobile-nav";
 import { MobileSidebar } from "./sidebar";
 import CartSidebarCom from "../CartSidebar";
 import { getSessionAction } from "@/actions/user.action";
+import { getCartItemAction } from "@/actions/cart.action";
 
 const NavbarMain = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -56,8 +58,6 @@ const NavbarMain = () => {
     fetchUserSession();
   }, []);
 
-  console.log(session);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -74,7 +74,7 @@ const NavbarMain = () => {
   const fetchCartData = async () => {
     try {
       setCartIsloading(true);
-      const res = await cartServices.getCart();
+      const res = await getCartItemAction();
       setCartData(res);
     } catch (error) {
       console.error(error);

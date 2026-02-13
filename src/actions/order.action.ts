@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { orderAPI } from "@/lib/api";
-import { orderServices } from "@/services/order.services";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -39,7 +39,6 @@ export async function updateOrderStatusAction(orderId: string, status: string) {
       body: JSON.stringify({ status }),
     });
 
-    // রেসপন্স JSON কি না তা চেক করা
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       const errorText = await response.text();
@@ -55,7 +54,6 @@ export async function updateOrderStatusAction(orderId: string, status: string) {
       throw new Error(data.message || "Failed to update order status");
     }
 
-    // ✅ UI আপডেট করার জন্য পাথ রিভ্যালিডেট করুন
     revalidatePath(`/provider/orders/${orderId}`);
 
     return { success: true, data };

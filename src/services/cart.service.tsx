@@ -12,7 +12,7 @@ export const cartServices = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: cookieStore.toString(),
+          Cookie: cookieStore,
         },
         body: JSON.stringify({ mealId, quantity }),
         cache: "no-store",
@@ -21,21 +21,26 @@ export const cartServices = {
       const result = await response.json();
 
       if (!response.ok) {
-        toast.error(result.message || "Failed to add to cart");
+        const errorMessage = result.message || "Failed to add to cart";
+        toast.error(errorMessage);
+        return { data: null, error: errorMessage }; // Return structured error
       }
 
       toast.success(result.message || "Added to cart!");
-      return result.data;
+      return { data: result.data, error: null };
     } catch (error) {
-      throw error;
+      console.error("Cart Error:", error);
+      toast.error("A network error occurred.");
+      return { data: null, error: "Network failure" };
     }
   },
-  async getCart() {
+  async getCart(cookieStore: any) {
     try {
       const response = await fetch(`${apiURl}/cart`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookieStore,
         },
         credentials: "include",
         cache: "no-store",

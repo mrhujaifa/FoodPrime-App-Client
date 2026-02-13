@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
 import { cartServices } from "@/services/cart.service";
@@ -17,6 +18,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import SecNavbar from "@/components/layouts/HeaderNav";
+import { getCartItemAction } from "@/actions/cart.action";
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState<any>(null);
@@ -40,7 +42,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const data = await cartServices.getCart();
+        const data = await getCartItemAction();
         setCart(data);
 
         if (data?.user) {
