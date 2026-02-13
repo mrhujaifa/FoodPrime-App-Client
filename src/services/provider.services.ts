@@ -1,10 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { providerAPI } from "@/lib/api";
-import {
-  CreateMealRequest,
-  IMeal,
-  Meal,
-  UpdateMealPayload,
-} from "@/types";
+import { CreateMealRequest, IMeal, Meal, UpdateMealPayload } from "@/types";
 import { ApiResponse } from "@/types/api/api";
 import {
   ICreateProviderProfile,
@@ -14,7 +10,7 @@ import {
 // import { cookies } from "next/headers";
 
 export const providerServices = {
-  createMeal: async (payload: CreateMealRequest) => {
+  createMeal: async (payload: CreateMealRequest, cookie: any) => {
     const url = `${providerAPI}/meals`;
 
     try {
@@ -22,8 +18,9 @@ export const providerServices = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookie.toString(),
         },
-        credentials: "include",
+        // credentials: "include",
         body: JSON.stringify(payload),
       });
 

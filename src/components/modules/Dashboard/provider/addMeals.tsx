@@ -9,6 +9,7 @@ import { providerServices } from "@/services/provider.services";
 import { MealFormData, Spicy } from "@/types";
 import { useUser } from "@/hooks/useSession";
 import { getSessionAction } from "@/actions/user.action";
+import { providerCreateMealAction } from "@/actions/provider.action";
 
 const MealForm = () => {
   const [loading, setLoading] = useState(false);
@@ -33,29 +34,29 @@ const MealForm = () => {
 
   // User session pawa gele providerId set kora
 
-  useEffect(() => {
-    const fetchUserSession = async () => {
-      try {
-        setLoading(true);
-        const user = await getSessionAction();
-        setSession(user.data || null);
-      } catch (error) {
-        console.error("Error fetching session:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserSession = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const user = await getSessionAction();
+  //       setSession(user.data || null);
+  //     } catch (error) {
+  //       console.error("Error fetching session:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchUserSession();
-  }, []);
+  //   fetchUserSession();
+  // }, []);
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      setFormData((prev) => ({ ...prev, providerId: session?.user?.id }));
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session?.user?.id) {
+  //     setFormData((prev) => ({ ...prev, providerId: session?.user?.id }));
+  //   }
+  // }, [session]);
 
-  console.log(session?.user?.id);
+  // console.log(session?.user?.id);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -70,15 +71,19 @@ const MealForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.providerId) {
-      toast.error("Identity not verified. Please refresh.");
-      return;
-    }
+    // if (!formData.providerId) {
+    //   toast.error("Identity not verified. Please refresh.");
+    //   return;
+    // }
+
+    console.log("..........");
 
     setLoading(true);
     setErrors({});
 
     const result = mealSchema.safeParse(formData);
+
+    console.log(result);
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -91,7 +96,8 @@ const MealForm = () => {
     }
 
     try {
-      const res = await providerServices.createMeal(result.data);
+      const res = await providerCreateMealAction(result.data);
+      console.log(res);
       if (res.success) {
         toast.success("Meal created successfully!");
         // Form reset logic

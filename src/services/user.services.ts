@@ -10,10 +10,9 @@ export const userService = {
 
       const res = await fetch(`${AUTH_URL}/get-session`, {
         headers: {
+          "Content-Type": "application/json",
           cookie: (await cookies()).toString(),
         },
-
-        credentials: "include",
       });
 
       const session = await res.json();

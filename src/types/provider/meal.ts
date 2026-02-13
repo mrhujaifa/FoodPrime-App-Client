@@ -32,7 +32,7 @@ export interface CreateMealRequest {
   isVeg?: boolean;
   spiciness?: Spicy;
   categoryId: string;
-  providerId: string;
+  // providerId: string;
   prepTime?: number | null;
   calories?: number | null;
 }

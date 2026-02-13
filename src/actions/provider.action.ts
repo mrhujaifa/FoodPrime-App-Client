@@ -1,6 +1,8 @@
 "use server";
 
 import { providerAPI } from "@/lib/api";
+import { providerServices } from "@/services/provider.services";
+import { CreateMealRequest } from "@/types";
 import { cookies } from "next/headers";
 
 export const getProviderOwnOrdersAction = async () => {
@@ -41,4 +43,12 @@ export const getProviderOwnOrdersAction = async () => {
       message: "সার্ভারের সাথে যোগাযোগ করা সম্ভব হচ্ছে না।",
     };
   }
+};
+
+export const providerCreateMealAction = async (payload: CreateMealRequest) => {
+  const cookieStore = await cookies();
+
+  const creatMeal = await providerServices.createMeal(payload, cookieStore);
+
+  return creatMeal;
 };

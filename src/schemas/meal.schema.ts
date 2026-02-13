@@ -11,7 +11,7 @@ export const mealSchema = z.object({
   isVeg: z.boolean().default(false),
   spiciness: z.nativeEnum(Spicy).default(Spicy.MEDIUM),
   categoryId: z.string().min(1, "Category is required"),
-  providerId: z.string().min(1, "Provider ID is required"),
+  // providerId: z.string().min(1, "Provider ID is required"),
   prepTime: z.coerce.number().optional().nullable(),
   calories: z.coerce.number().optional().nullable(),
 });
