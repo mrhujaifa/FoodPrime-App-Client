@@ -28,3 +28,40 @@ export const getCartItemAction = async () => {
     console.log(error);
   }
 };
+export const updateCartQuantityAction = async (
+  itemId: string,
+  action: "increase" | "decrease",
+) => {
+  try {
+    const cookieStore = (await cookies()).toString();
+    const result = await cartServices.updateQuantity(
+      itemId,
+      action,
+      cookieStore,
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const deleteCartItemAction = async (itemId: string) => {
+  try {
+    const cookieStore = (await cookies()).toString();
+    const result = await cartServices.deleteItem(itemId, cookieStore);
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const deleteCartAllItemsAction = async () => {
+  try {
+    const cookieStore = (await cookies()).toString();
+    const result = await cartServices.clearCart(cookieStore);
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};

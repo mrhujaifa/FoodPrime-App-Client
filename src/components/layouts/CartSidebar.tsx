@@ -1,4 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import {
+  deleteCartAllItemsAction,
+  deleteCartItemAction,
+  updateCartQuantityAction,
+} from "@/actions/cart.action";
 import { cartServices } from "@/services/cart.service";
 import { X, ShoppingBag, Plus, Minus, Trash2, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -45,7 +51,7 @@ const CartSidebarCom = ({
     if (isUpdating) return;
     try {
       setIsUpdating(itemId);
-      await cartServices.updateQuantity(itemId, action);
+      await updateCartQuantityAction(itemId, action);
       await fetchCartData();
     } catch (error) {
       console.error("Failed to update quantity", error);
@@ -68,7 +74,7 @@ const CartSidebarCom = ({
     if (isUpdating) return;
     try {
       setIsUpdating(itemId);
-      await cartServices.deleteItem(itemId);
+      await deleteCartItemAction(itemId);
 
       // Success Toast
       toast.success("Item removed from cart", {
@@ -90,11 +96,11 @@ const CartSidebarCom = ({
   const handleClearCart = async () => {
     if (window.confirm("Are you sure you want to clear your cart?")) {
       try {
-        await cartServices.clearCart();
+        await deleteCartAllItemsAction();
 
         // Success Toast
-        toast.success("Cart cleared", {
-          description: "All items have been removed.",
+        toast.success("Cart cleared successfull!", {
+          description: "All items have been clear.",
         });
 
         await fetchCartData();

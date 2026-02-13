@@ -55,15 +55,19 @@ export const cartServices = {
       return null;
     }
   },
-  async updateQuantity(itemId: string, action: "increase" | "decrease") {
+  async updateQuantity(
+    itemId: string,
+    action: "increase" | "decrease",
+    cookieStore: any,
+  ) {
     try {
       const response = await fetch(`${cartAPI}/update-quantity`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookieStore,
         },
         body: JSON.stringify({ itemId, action }),
-        credentials: "include",
         cache: "no-store",
       });
 
@@ -85,14 +89,14 @@ export const cartServices = {
   },
 
   // Single Item Delete
-  async deleteItem(itemId: string) {
+  async deleteItem(itemId: string, cookieStore: any) {
     try {
       const response = await fetch(`${apiURl}/cart/item/${itemId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookieStore(),
         },
-        credentials: "include", // Cookie ba Session-er jonno eita MUST
       });
 
       const result = await response.json();
@@ -108,12 +112,13 @@ export const cartServices = {
   },
 
   // Clear Full Cart
-  async clearCart() {
+  async clearCart(cookieStore: any) {
     try {
       const response = await fetch(`${apiURl}/cart/clear`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookieStore,
         },
         credentials: "include",
       });
