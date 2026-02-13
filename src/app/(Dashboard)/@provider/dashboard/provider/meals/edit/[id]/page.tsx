@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Save, Loader2, ArrowLeft, RefreshCcw } from "lucide-react";
 import { IMeal, Spicy } from "@/types";
 import { providerServices } from "@/services/provider.services";
+import { getProviderOwnMealAction } from "@/actions/provider.action";
 
 export default function EditMealForm() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function EditMealForm() {
     const loadMealData = async () => {
       try {
         setFetching(true);
-        const result = await providerServices.getProviderOwnMeals();
+        const result = await getProviderOwnMealAction();
         if (result.success && result.data) {
           const currentMeal = (result.data as unknown as IMeal[]).find(
             (m) => m.id === mealId,

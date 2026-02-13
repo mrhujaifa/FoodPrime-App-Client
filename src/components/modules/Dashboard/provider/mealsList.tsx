@@ -6,23 +6,14 @@ import { useState, useEffect } from "react";
 import { Edit, Trash2, Plus, Utensils } from "lucide-react";
 import { toast } from "sonner";
 import { providerServices } from "@/services/provider.services";
-
-interface Meal {
-  id: string;
-  name: string;
-  price: number;
-  discountPrice?: number;
-  category: { name: string };
-  isAvailable: boolean;
-  imageUrl: string | null;
-}
+import { providerOwnMeal } from "@/types";
 
 interface Props {
-  initialMeals: Meal[];
+  initialMeals: providerOwnMeal[];
 }
 
 export default function MealListPage({ initialMeals }: Props) {
-  const [meals, setMeals] = useState<Meal[]>(initialMeals);
+  const [meals, setMeals] = useState<providerOwnMeal[]>(initialMeals);
 
   useEffect(() => {
     setMeals(initialMeals);

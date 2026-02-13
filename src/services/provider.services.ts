@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { providerAPI } from "@/lib/api";
-import { CreateMealRequest, IMeal, Meal, UpdateMealPayload } from "@/types";
+import {
+  CreateMealRequest,
+  IMeal,
+  Meal,
+  providerOwnMeal,
+  UpdateMealPayload,
+} from "@/types";
 import { ApiResponse } from "@/types/api/api";
 import {
   ICreateProviderProfile,
@@ -181,7 +187,7 @@ export const providerServices = {
 
       return {
         success: true,
-        data: result.data as IMeal,
+        data: result.data as providerOwnMeal[],
         message: "Get Provider successfully!",
       };
     } catch (error) {

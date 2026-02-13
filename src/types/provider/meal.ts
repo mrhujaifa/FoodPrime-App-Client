@@ -164,7 +164,7 @@ export interface IMeal {
   prepTime?: number | null;
   calories?: number | null;
   categoryId: string;
-  providerId: string;
+  // providerId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -183,3 +183,18 @@ export type UpdateMealPayload = {
   calories?: number | string;
   categoryId?: string;
 };
+
+export interface providerOwnMeal {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  discountPrice: string | null;
+  category: Category;
+  categoryId: string;
+  imageUrl: string | null;
+  isAvailable: boolean;
+  providerId: string;
+  createdAt: string;
+  updatedAt: string;
+}

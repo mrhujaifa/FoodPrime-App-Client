@@ -5,6 +5,7 @@ export default async function Meals() {
   const fetchProviderOwnMeal = await getProviderOwnMealAction();
 
   const mealsData = fetchProviderOwnMeal.data || [];
+  console.log(mealsData);
 
   return (
     <div>
