@@ -202,6 +202,7 @@ export const providerServices = {
   updateOwnMeal: async (
     mealId: string,
     payload: UpdateMealPayload,
+    cookieStore: any,
   ): Promise<ApiResponse<IMeal>> => {
     const url = `${providerAPI}/meals/${mealId}`;
 
@@ -210,9 +211,9 @@ export const providerServices = {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
         },
         body: JSON.stringify(payload),
-        credentials: "include",
       });
 
       const result = await response.json();

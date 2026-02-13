@@ -6,7 +6,10 @@ import { toast } from "sonner";
 import { Save, Loader2, ArrowLeft, RefreshCcw } from "lucide-react";
 import { IMeal, Spicy } from "@/types";
 import { providerServices } from "@/services/provider.services";
-import { getProviderOwnMealAction } from "@/actions/provider.action";
+import {
+  getProviderOwnMealAction,
+  updateProviderOwnMealAction,
+} from "@/actions/provider.action";
 
 export default function EditMealForm() {
   const router = useRouter();
@@ -69,7 +72,7 @@ export default function EditMealForm() {
     };
 
     try {
-      const result = await providerServices.updateOwnMeal(mealId, payload);
+      const result = await updateProviderOwnMealAction(mealId, payload);
       if (result.success) {
         toast.success("Dish updated successfully!");
         router.refresh();

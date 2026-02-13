@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { providerAPI } from "@/lib/api";
 import { providerServices } from "@/services/provider.services";
-import { CreateMealRequest } from "@/types";
+import { CreateMealRequest, UpdateMealPayload } from "@/types";
 import { cookies } from "next/headers";
 
 export const getProviderOwnOrdersAction = async () => {
@@ -56,5 +57,24 @@ export const getProviderOwnMealAction = async () => {
     data: getMeals.data,
     success: getMeals.success,
     error: getMeals.errors,
+  };
+};
+
+export const updateProviderOwnMealAction = async (
+  mealId: string,
+  payload: UpdateMealPayload,
+) => {
+  const cookieStore = await cookies();
+  const updateMeal = await providerServices.updateOwnMeal(
+    mealId,
+    payload,
+    cookieStore,
+  );
+
+  return {
+    data: updateMeal.data,
+    error: updateMeal.errors,
+    message: updateMeal.message,
+    success: updateMeal.success,
   };
 };
