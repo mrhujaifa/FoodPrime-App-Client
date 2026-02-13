@@ -1,22 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { API } from "@/lib/api";
 
-const API_URL = API
+const API_URL = API;
 
 export const reviewServices = {
-  // ১. রিভিউ পোস্ট করার জন্য সার্ভিস
   createReview: async (
     rating: number,
     comment: string,
     customerId: string,
     mealId: string,
+    cookie: any,
   ) => {
     try {
       const response = await fetch(`${API_URL}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Cookie: cookie,
         },
-        credentials: "include",
         body: JSON.stringify({
           rating,
           comment,

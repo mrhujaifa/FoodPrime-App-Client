@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import Navbar from "@/components/layouts/Navbar";
 import { useUser } from "@/hooks/useSession";
 import { getMyOrderAction } from "@/actions/order.action";
+import { createReviewsAction } from "@/actions/review.action";
 
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -27,7 +28,6 @@ export default function MyOrdersPage() {
   const [userId, setUserId] = useState("");
   const [session, setSession] = useState<any>(null);
 
-  // Inline Review States (আইটেম ওয়াইজ ডাটা রাখার জন্য অবজেক্ট ব্যবহার করা হয়েছে)
   const [reviewData, setReviewData] = useState<{
     [key: string]: { rating: number; comment: string };
   }>({});
@@ -77,19 +77,18 @@ export default function MyOrdersPage() {
 
     setSubmittingId(mealId);
     try {
-      const res = await reviewServices.createReview(
+      const res = await createReviewsAction(
         data.rating || 5,
         data.comment,
         userId,
         mealId,
       );
 
-      if (res.success) {
+      if (res?.success) {
         toast.success("Review posted!");
-        // ক্লিয়ার করে দেওয়া যাতে আবার না পাঠানো যায়
         handleInputChange(mealId, "comment", "");
       } else {
-        toast.error(res.message);
+        toast.error(res?.message);
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to post review");
