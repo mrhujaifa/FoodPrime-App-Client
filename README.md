@@ -234,8 +234,4 @@ Design your own schema for the following tables:
                    └──────────────┘
 ```
 
----
 
-## Submission
-
-📋 **See [README.md](./README.md) for submission guidelines, timeline, and marks.**
