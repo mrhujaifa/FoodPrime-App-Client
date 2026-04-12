@@ -97,7 +97,7 @@ export default function FlashDealsSection() {
                 {/* Image */}
                 <div className="relative overflow-hidden">
                   <img
-                    src={deal.image}
+                    src={deal.image || ""}
                     alt={deal.title}
                     className="w-full h-56 object-cover group-hover:scale-110 transition duration-700"
                   />

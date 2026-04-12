@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Link from "next/link";
 import {
@@ -7,6 +8,7 @@ import {
   LogOut,
   ClipboardList,
   LayoutDashboardIcon,
+  Bike,
 } from "lucide-react";
 
 export const DesktopAuthSection = ({
@@ -67,6 +69,11 @@ export const DesktopAuthSection = ({
             href="/dashboard"
             label="Dashboard"
             icon={<LayoutDashboardIcon size={16} />}
+          />
+          <UserMenuItem
+            href="/become-a-partner"
+            label="Become a Provider"
+            icon={<Bike size={16} />}
           />
           <hr className="my-1 border-gray-100" />
           <button

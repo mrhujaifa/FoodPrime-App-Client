@@ -10,15 +10,15 @@ const nextConfig: NextConfig = {
       ),
       {
         protocol: "https",
-        hostname: "i.ibb.co.com", // Error solve korar jonno hostname-ta eivabe dite hoy
+        hostname: "i.ibb.co.com",
       },
       {
         protocol: "https",
-        hostname: "images.unsplash.com", // Error solve korar jonno hostname-ta eivabe dite hoy
+        hostname: "images.unsplash.com",
       },
       {
         protocol: "https",
-        hostname: "via.placeholder.com", // Error solve korar jonno hostname-ta eivabe dite hoy
+        hostname: "via.placeholder.com",
       },
     ],
   },

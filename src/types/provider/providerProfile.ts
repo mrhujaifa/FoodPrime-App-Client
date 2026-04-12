@@ -44,8 +44,6 @@ export type ICreateProviderProfile = Omit<
   | "updatedAt"
 >;
 
-
-
 // type for profile profile page
 export enum Spicy {
   NONE = "NONE",
@@ -101,7 +99,7 @@ export interface IProviderProfileType {
   username: string;
   description: string | null;
   address: string;
-  logoUrl: string | null;
+  logoUrl: string;
   coverUrl: string | null;
   isOpen: boolean;
   isVerified: boolean;
@@ -117,4 +115,3 @@ export interface IProviderProfileType {
   };
   meals?: IMeal[];
 }
-

@@ -35,7 +35,7 @@ const RestaurantProfile = async ({ params }: PageProps) => {
       <div className="relative h-[300px] md:h-[350px] lg:h-[400px] rounded-xl w-full bg-gray-200 mt-20 group overflow-hidden">
         {provider?.coverUrl ? (
           <Image
-            src={provider.coverUrl}
+            src={provider.coverUrl || ""}
             alt={`${provider?.businessName || "Restaurant"} Cover`}
             fill
             priority

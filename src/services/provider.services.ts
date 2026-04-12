@@ -161,6 +161,38 @@ export const providerServices = {
       };
     }
   },
+  getAllProviderProfile: async () => {
+    const url = `${providerAPI}/all-providers`;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: result.message || "Failed to Get Provider profile",
+          errors: result.errors,
+        };
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      return {
+        success: false,
+        message: "Internal server error.",
+      };
+    }
+  },
   getProviderOwnMeals: async (cookie: any) => {
     const url = `${providerAPI}/own-meals`;
     const allCookies = cookie.toString();

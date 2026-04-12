@@ -26,11 +26,7 @@ export const mealServices = {
         };
       }
 
-      return {
-        success: true,
-        data: result.data as Meal,
-        message: "Get All meals successfully!",
-      };
+      return result.data;
     } catch (error) {
       console.error(error);
       return {
@@ -64,11 +60,7 @@ export const mealServices = {
         };
       }
 
-      return {
-        success: true,
-        data: result.data,
-        message: "Get All meals categories successfully!",
-      };
+      return result.data;
     } catch (error) {
       console.error(error);
       return {

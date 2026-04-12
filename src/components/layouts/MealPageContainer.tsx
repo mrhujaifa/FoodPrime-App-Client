@@ -12,9 +12,22 @@ import { Filter, X, SlidersHorizontal } from "lucide-react";
 import { FilterSidebarUIMobile } from "./filter-mobile-sidebar";
 import PartnerSection from "./PartnerShip";
 import DealsSection from "./DealsSection";
+import TopBrandsSection from "../modules/Home/TopBrandsSlider";
+import { IProviderProfileType } from "@/types/provider/providerProfile";
+import CuisinesSection from "../modules/Home/CuisinesSection";
+import { useUser } from "@/hooks/useSession";
+import SignedInBanner from "../ui/isSignUpBanner";
+
+export interface Category {
+  id: number;
+  name: string;
+  image: string;
+}
 
 interface MealPageContainerProps {
   initialMeals: MealsProviderProfile[];
+  allProviders: IProviderProfileType[];
+  categories: Category[];
 }
 
 // Loading Skeleton Component
@@ -45,12 +58,17 @@ const RightSideSkeleton = () => (
 
 export default function MealPageContainer({
   initialMeals,
+  allProviders,
+  categories,
 }: MealPageContainerProps) {
+  console.log(categories);
   // --- States ---
   const [filteredMeals, setFilteredMeals] =
     useState<MealsProviderProfile[]>(initialMeals);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false); // Mobile Drawer State
+
+  const { user } = useUser();
 
   // --- Filter Logic ---
   const handleFilterApply = (filters: FilterState) => {
@@ -122,15 +140,15 @@ export default function MealPageContainer({
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 md:mt-6 lg:px-4 md:p-0">
+      <div className="flex flex-col md:flex-row gap-8 md:mt-6 md:p-0">
         {/* 2. DESKTOP SIDEBAR (Left Side - Hidden on Mobile) */}
 
-        <div className="hidden md:block w-72 flex-shrink-0 sticky top-24 h-fit">
+        <div className="hidden md:block relative z-20 w-72 flex-shrink-0 sticky top-24 h-fit">
           <FilterSidebarUI onApply={handleFilterApply} />
         </div>
 
         {/* 3. MAIN CONTENT AREA (Meals List) */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 relative z-0">
           {isFiltering ? (
             <RightSideSkeleton />
           ) : (
@@ -150,8 +168,23 @@ export default function MealPageContainer({
                 </span>
               </div>
 
-              <SignUpBanner />
+              {/* if user not signup show this banner */}
+              {user ? (
+                <SignedInBanner userName={user.name} />
+              ) : (
+                <SignUpBanner />
+              )}
 
+              <div>
+                <CuisinesSection categories={categories} />
+              </div>
+
+              {/* Top brands section for Home page */}
+              <div className="-z-40">
+                <TopBrandsSection brands={allProviders} />
+              </div>
+
+              {/* Restaurants Section conditionally rendered */}
               <div className="mt-6 md:mt-8">
                 {filteredMeals.length > 0 ? (
                   <AllRestaurants mealsData={filteredMeals} />
@@ -170,10 +203,12 @@ export default function MealPageContainer({
                 )}
               </div>
 
+              {/* Deals and Partnership Sections */}
               <div>
                 <DealsSection></DealsSection>
               </div>
 
+              {/* Partnership Section */}
               <div>
                 <PartnerSection />
               </div>
@@ -182,9 +217,7 @@ export default function MealPageContainer({
         </div>
       </div>
 
-      {/* ========================================= */}
       {/* 4. MOBILE FILTER SIDEBAR DRAWER (Right Side) */}
-      {/* ========================================= */}
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           {/* Backdrop (Dark Overlay) */}

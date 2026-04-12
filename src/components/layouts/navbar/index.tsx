@@ -16,7 +16,6 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 
 import logo from "../../../../public/logos/logo5.png";
-import { cartServices } from "@/services/cart.service";
 import { authClient } from "@/lib/auth-client";
 
 // Modular Components
