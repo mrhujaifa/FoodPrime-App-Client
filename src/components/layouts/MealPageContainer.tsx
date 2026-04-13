@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MealsProviderProfile } from "@/types";
+import { Category, MealsProviderProfile } from "@/types";
 import {
   FilterSidebarUI,
   FilterState,
@@ -17,12 +17,6 @@ import { IProviderProfileType } from "@/types/provider/providerProfile";
 import CuisinesSection from "../modules/Home/CuisinesSection";
 import { useUser } from "@/hooks/useSession";
 import SignedInBanner from "../ui/isSignUpBanner";
-
-export interface Category {
-  id: number;
-  name: string;
-  image: string;
-}
 
 interface MealPageContainerProps {
   initialMeals: MealsProviderProfile[];
