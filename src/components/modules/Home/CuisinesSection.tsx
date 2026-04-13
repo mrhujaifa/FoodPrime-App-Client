@@ -14,7 +14,24 @@ export default function CuisinesSlider({
 }: {
   categories: Category[];
 }) {
-  const cuisines = categories.slice(0, 10); // Limiting to first 10 categories for the slider
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  const cuisines = safeCategories.slice(0, 10); // Limiting to first 10 categories for the slider
+
+  if (cuisines.length === 0) {
+    return (
+      <section className="w-full py-6 md:py-8">
+        <div className="mx-auto max-w-7xl">
+          <h1 className="text-[26px] font-bold text-[#1f1f1f] mb-3">
+            Cuisines
+          </h1>
+          <p className="text-sm text-gray-500">
+            Cuisine categories are unavailable right now.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="w-full  py-6 md:py-8">
       <div className="mx-auto max-w-7xl">

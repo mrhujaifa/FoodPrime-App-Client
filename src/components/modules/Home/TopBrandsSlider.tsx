@@ -16,6 +16,21 @@ interface AllProviderProps {
 const FALLBACK_BRAND_LOGO = "/logos/logo5.png";
 
 export default function TopBrandsSection({ brands }: AllProviderProps) {
+  const safeBrands = Array.isArray(brands) ? brands : [];
+
+  if (safeBrands.length === 0) {
+    return (
+      <section className="relative z-0 w-full py-8">
+        <div className="mx-auto w-full max-w-7xl">
+          <h1 className="text-[26px] font-bold text-[#1f1f1f]">Top Brands</h1>
+          <p className="mt-3 text-sm text-slate-500">
+            Brands will appear here once the backend data is available.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative z-0 w-full py-8">
       <div className="mx-auto w-full max-w-7xl">
@@ -57,7 +72,7 @@ export default function TopBrandsSection({ brands }: AllProviderProps) {
           }}
           className="topBrandsSwiper w-full min-w-0"
         >
-          {brands.map((brand) => {
+          {safeBrands.map((brand) => {
             const logoSrc =
               typeof brand.logoUrl === "string" && brand.logoUrl.trim()
                 ? brand.logoUrl

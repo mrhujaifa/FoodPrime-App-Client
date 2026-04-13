@@ -9,7 +9,8 @@ interface AllRestaurantsProps {
   mealsData: MealsProviderProfile[];
 }
 const AllRestaurants = ({ mealsData }: AllRestaurantsProps) => {
-  const [meals, setMeals] = useState(mealsData);
+  const safeMealsData = Array.isArray(mealsData) ? mealsData : [];
+  const [meals, setMeals] = useState(safeMealsData);
 
   const getDiscountPercent = (
     price: string | number,
@@ -22,7 +23,7 @@ const AllRestaurants = ({ mealsData }: AllRestaurantsProps) => {
     return Math.round(((p - d) / p) * 100);
   };
 
-  if (!mealsData || mealsData.length === 0) {
+  if (safeMealsData.length === 0) {
     return (
       <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
         <h3 className="text-lg font-bold text-gray-700">

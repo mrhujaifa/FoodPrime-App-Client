@@ -26,11 +26,11 @@ export default async function DashboardRootLayout({
   provider: React.ReactNode;
 }) {
   const sessionResponse = await userService.getSession();
-  const userInfo = await sessionResponse?.data?.user;
+  const userInfo = sessionResponse?.data?.user;
 
   const role = userInfo?.role;
 
-  console.log(userInfo.role);
+  console.log(userInfo?.role);
 
   return (
     <div className="bg-black">

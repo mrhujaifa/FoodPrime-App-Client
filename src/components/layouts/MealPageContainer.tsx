@@ -55,10 +55,13 @@ export default function MealPageContainer({
   allProviders,
   categories,
 }: MealPageContainerProps) {
-  console.log(categories);
+  const safeInitialMeals = Array.isArray(initialMeals) ? initialMeals : [];
+  const safeAllProviders = Array.isArray(allProviders) ? allProviders : [];
+  const safeCategories = Array.isArray(categories) ? categories : [];
   // --- States ---
-  const [filteredMeals, setFilteredMeals] =
-    useState<MealsProviderProfile[]>(initialMeals);
+  const [filteredMeals, setFilteredMeals] = useState<MealsProviderProfile[]>(
+    safeInitialMeals,
+  );
   const [isFiltering, setIsFiltering] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false); // Mobile Drawer State
 
@@ -70,7 +73,7 @@ export default function MealPageContainer({
     setIsMobileFilterOpen(false); // Filter apply korle Drawer bondho hobe
 
     setTimeout(() => {
-      let result = [...initialMeals];
+      let result = [...safeInitialMeals];
 
       // 1. Cuisine Filter
       if (filters.cuisines.length > 0) {
@@ -170,12 +173,12 @@ export default function MealPageContainer({
               )}
 
               <div>
-                <CuisinesSection categories={categories} />
+                <CuisinesSection categories={safeCategories} />
               </div>
 
               {/* Top brands section for Home page */}
               <div className="-z-40">
-                <TopBrandsSection brands={allProviders} />
+                <TopBrandsSection brands={safeAllProviders} />
               </div>
 
               {/* Restaurants Section conditionally rendered */}
@@ -188,7 +191,7 @@ export default function MealPageContainer({
                       No meals found matching your filters.
                     </p>
                     <button
-                      onClick={() => setFilteredMeals(initialMeals)}
+                      onClick={() => setFilteredMeals(safeInitialMeals)}
                       className="text-yellow-600 font-bold mt-2 underline"
                     >
                       Clear all filters

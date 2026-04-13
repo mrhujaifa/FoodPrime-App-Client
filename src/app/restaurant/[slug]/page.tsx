@@ -22,11 +22,15 @@ const RestaurantProfile = async ({ params }: PageProps) => {
 
   console.log(provider);
 
-  const providerMeals = provider?.meals;
+  const providerMeals = Array.isArray(provider?.meals) ? provider.meals : [];
 
   const categoriesNav = await mealServices.getMealCategories();
 
-  const categories = categoriesNav.data;
+  const categories = Array.isArray(categoriesNav)
+    ? categoriesNav
+    : Array.isArray(categoriesNav?.data)
+      ? categoriesNav.data
+      : [];
 
   return (
     <div className="max-w-350 mx-auto  font-sans">
@@ -81,7 +85,7 @@ const RestaurantProfile = async ({ params }: PageProps) => {
               {/* {activeTab} */}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {providerMeals?.map((meal) => (
+              {providerMeals.map((meal) => (
                 <MenuCard
                   key={meal.id}
                   meal={{

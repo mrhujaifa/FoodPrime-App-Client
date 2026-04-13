@@ -1,17 +1,21 @@
-import AppDownloadSection from "@/components/layouts/PartnerShip";
 import MealPageContainer from "@/components/layouts/MealPageContainer";
 import { mealServices } from "@/services/meal.services";
 import { MealsProviderProfile } from "@/types";
 import { providerServices } from "@/services/provider.services";
 
+const toArray = <T,>(value: T[] | unknown): T[] =>
+  Array.isArray(value) ? value : [];
+
 export default async function PrimeMeal() {
   // Fetching meals data from the server
-  const mealsData = await mealServices.getAllMeals();
+  const mealsData = toArray<MealsProviderProfile>(
+    await mealServices.getAllMeals(),
+  );
   // Fetching all provider profiles from the server
-  const allProvider = await providerServices.getAllProviderProfile();
+  const allProvider = toArray(await providerServices.getAllProviderProfile());
 
   // Fetching meal categories (if needed for filters or display)
-  const categories = await mealServices.getMealCategories();
+  const categories = toArray(await mealServices.getMealCategories());
 
   return (
     <div>
